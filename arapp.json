@@ -1,8 +1,8 @@
 {
   "roles": [
     {
-      "name": "Increment the counter",
-      "id": "INCREMENT_ROLE",
+      "name": "Edit the wiki",
+      "id": "EDIT_ROLE",
       "params": []
     },
     {

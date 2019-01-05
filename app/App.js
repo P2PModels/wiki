@@ -11,6 +11,8 @@ import Aragon, { providers } from '@aragon/client'
 import styled from 'styled-components'
 import { Observable } from 'rxjs'
 import {markdown} from 'markdown';
+import {Buffer} from 'buffer';
+import Multihashes from 'multihashes';
 
 import ipfsAPI from 'ipfs-api'
 var ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})
@@ -35,12 +37,19 @@ export default class App extends React.Component {
     this.setState({ editing: !this.state.editing });
   }
   onSave() {
+    ipfs.add(Buffer.from(Math.random()+"", "utf-8"))
+    .then(value => {
+      console.log("http://localhost:8080/ipfs/"+value[0].hash)
+      let hex = ipfsToHex(value[0].hash)
+      this.props.app.edit(hex)
+    })
     this.setState({ editing: false });
   }
   render () {
     return (
       <AppContainer>
         <div>
+          <ObservedHash observable={this.props.observable} />
           {
             this.state.editing ?
               <span>
@@ -65,15 +74,23 @@ export default class App extends React.Component {
   }
 }
 
-function getText(hash){
-  return Observable.fromPromise(new Promise((resolve, reject) => {
-    ipfs.get(hash).then(o => resolve({text: o[0].content.toString('utf8')}))
-  }))
+function ipfsToHex(ipfsHash) {
+  let buf = Multihashes.fromB58String(ipfsHash);
+  let dig = Multihashes.decode(buf).digest;
+  let hex = '0x' + Multihashes.toHexString(dig);
+  return hex;
+}
+
+function hexToIpfs(hex) {
+  let dig = Multihashes.fromHexString(hex.substring(2));
+  let buf = Multihashes.encode(dig, 'sha2-256');
+  let ipfsHash = Multihashes.toB58String(buf);
+  return ipfsHash;
 }
 
 const ObservedX = observe(
-  observable => getText('/ipfs/QmYhjFtSfCqdoc8bsNrbbZUw8LEaKu3CnsNeRcqMQJbRWU'),
-  { text: 'hello world' }
+  (state$) => state$,
+  { hash: null, text: "" }
 )
 
 const ObservedText = ObservedX (
@@ -82,5 +99,9 @@ const ObservedText = ObservedX (
 )
 
 const ObservedTextarea = ObservedX (
-  ({ text }) => <textarea style={{"width":"60vw","height":"40vh"}} value={text} onChange={(event)=>text = event.target.value}></textarea>
+  ({ text }) => <textarea style={{"width":"60vw","height":"40vh"}} id="editTextarea" value={text} onChange={(event)=>text = event.target.value}></textarea>
+)
+
+const ObservedHash = ObservedX(
+  ({ hash }) => <Text.Block style={{ textAlign: 'right' }} size='large'>{hash}</Text.Block>
 )

@@ -1,20 +1,18 @@
 pragma solidity ^0.4.24;
 
 import "@aragon/os/contracts/apps/AragonApp.sol";
-import "@aragon/os/contracts/lib/math/SafeMath.sol";
 
 contract WikiApp is AragonApp {
-    using SafeMath for uint256;
 
     /// Events
-    event Increment(address indexed entity, uint256 step);
+    event Edit(address indexed entity, bytes newValue);
     event Decrement(address indexed entity, uint256 step);
 
     /// State
-    uint256 public value;
+    bytes public value;
 
     /// ACL
-    bytes32 constant public INCREMENT_ROLE = keccak256("INCREMENT_ROLE");
+    bytes32 constant public EDIT_ROLE = keccak256("EDIT_ROLE");
     bytes32 constant public DECREMENT_ROLE = keccak256("DECREMENT_ROLE");
 
     function initialize() onlyInit public {
@@ -22,12 +20,12 @@ contract WikiApp is AragonApp {
     }
 
     /**
-     * @notice Increment the counter by `step`
-     * @param step Amount to increment by
+     * @notice Edit the wiki text
+     * @param newValue New hash of the text
      */
-    function increment(uint256 step) auth(INCREMENT_ROLE) external {
-        value = value.add(step);
-        emit Increment(msg.sender, step);
+    function edit(bytes newValue) auth(EDIT_ROLE) external {
+        value = newValue;
+        emit Edit(msg.sender, newValue);
     }
 
     /**
@@ -35,7 +33,6 @@ contract WikiApp is AragonApp {
      * @param step Amount to decrement by
      */
     function decrement(uint256 step) auth(DECREMENT_ROLE) external {
-        value = value.sub(step);
         emit Decrement(msg.sender, step);
     }
 }
