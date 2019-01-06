@@ -3,6 +3,7 @@ import {
   AragonApp,
   Button,
   Text,
+  TextInput,
   Card,
 
   observe
@@ -11,11 +12,7 @@ import Aragon, { providers } from '@aragon/client'
 import styled from 'styled-components'
 import { Observable } from 'rxjs'
 import {markdown} from 'markdown';
-import {Buffer} from 'buffer';
-import Multihashes from 'multihashes';
-
-import ipfsAPI from 'ipfs-api'
-var ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})
+import {save as ipfsSave} from './ipfs-util';
 
 const AppContainer = styled(AragonApp)`
   display: flex;
@@ -36,72 +33,71 @@ export default class App extends React.Component {
   onClick() {
     this.setState({ editing: !this.state.editing });
   }
-  onSave() {
-    ipfs.add(Buffer.from(Math.random()+"", "utf-8"))
-    .then(value => {
-      console.log("http://localhost:8080/ipfs/"+value[0].hash)
-      let hex = ipfsToHex(value[0].hash)
+  onSave(text) {
+    ipfsSave(text).then(hex => {
       this.props.app.edit(hex)
+      this.setState({ editing: false });
     })
-    this.setState({ editing: false });
   }
   render () {
     return (
       <AppContainer>
         <div>
-          <ObservedHash observable={this.props.observable} />
-          {
-            this.state.editing ?
-              <span>
-                <Button onClick={this.onSave}>Save</Button>
-                <Button onClick={this.onClick}>Cancel</Button>
-              </span>
-            :
-            <Button onClick={this.onClick}>Edit</Button>
+          { !this.state.editing ?
+            <ViewPanel observable={this.props.observable} callback={this.onClick} />
+          :
+            <ObservedEditPanel observable={this.props.observable} callback={this.onSave} />
           }
-          <Card width="100%" height="100%">
-            {
-              this.state.editing ?
-              <ObservedTextarea observable={this.props.observable} />
-              :
-              <ObservedText observable={this.props.observable} />
-            }
-          </Card>
-          <Button onClick={() => this.props.app.decrement(1)}>Decrement</Button>
         </div>
       </AppContainer>
     )
   }
 }
 
-function ipfsToHex(ipfsHash) {
-  let buf = Multihashes.fromB58String(ipfsHash);
-  let dig = Multihashes.decode(buf).digest;
-  let hex = '0x' + Multihashes.toHexString(dig);
-  return hex;
+const ViewPanel = observe(
+    (state$) => state$,
+    {hash: 'no hash', text: 'no text'}
+  )(
+    ({hash, text, callback}) =>
+    <Card width="100%" height="100%">
+      <button onClick={callback}>Edit</button>
+      <Text.Block>{hash}</Text.Block>
+      <div dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }}></div>
+    </Card>
+  )
+
+class EditPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    console.log(props)
+    this.state = {...props};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({text: event.target.value});
+  }
+
+  handleSubmit(event) {
+    this.props.callback(this.state.text);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <input type="submit" value="Save" />
+        <div>
+          <TextInput wide value={this.state.text} onChange={this.handleChange} />
+        </div>
+      </form>
+    );
+  }
 }
 
-function hexToIpfs(hex) {
-  let dig = Multihashes.fromHexString(hex.substring(2));
-  let buf = Multihashes.encode(dig, 'sha2-256');
-  let ipfsHash = Multihashes.toB58String(buf);
-  return ipfsHash;
-}
-
-const ObservedX = observe(
-  (state$) => state$,
-  { hash: null, text: "" }
-)
-
-const ObservedText = ObservedX (
-  // FIXME: Sanitize or use an iframe to make it safe
-  ({ text }) => <div dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }}></div>
-)
-
-const ObservedTextarea = ObservedX (
-  ({ text }) => <textarea style={{"width":"60vw","height":"40vh"}} id="editTextarea" value={text} onChange={(event)=>text = event.target.value}></textarea>
-)
-
-const ObservedHash = ObservedX(
-  ({ hash }) => <Text.Block style={{ textAlign: 'right' }} size='large'>{hash}</Text.Block>
-)
+const ObservedEditPanel = observe(
+    (state$) => state$,
+    {hash: 'no hash', text: 'no text'}
+  )(EditPanel)

@@ -1,12 +1,7 @@
 import '@babel/polyfill'
 
 import Aragon from '@aragon/client'
-
-import Multihashes from 'multihashes';
-
-
-import ipfsAPI from 'ipfs-api'
-var ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})
+import {get as ipfsGet, hexToIpfs} from './ipfs-util'
 
 const app = new Aragon()
 
@@ -20,7 +15,7 @@ app.store(async (state, event) => {
   switch (event.event) {
     case 'Edit':
       let hash = await getValue();
-      let text = await getText(hash);
+      let text = await ipfsGet(hash);
       return { hash, text }
     default:
       return state
@@ -36,15 +31,4 @@ function getValue() {
       .map(value => hexToIpfs(value))
       .subscribe(resolve)
   })
-}
-
-function getText(hash){
-  return ipfs.get(hash).then(value => value[0].content.toString('utf-8'));
-}
-
-function hexToIpfs(hex) {
-  let dig = Multihashes.fromHexString(hex.substring(2));
-  let buf = Multihashes.encode(dig, 'sha2-256');
-  let ipfsHash = Multihashes.toB58String(buf);
-  return ipfsHash;
 }
