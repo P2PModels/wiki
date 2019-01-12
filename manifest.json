@@ -2,7 +2,7 @@
   "name": "Wiki",
   "description": "An application for Aragon",
   "icons": [{
-    "src": "/dist/images/icon.png",
+    "src": "images/icon.png",
     "sizes": "22x22"
   }],
   "start_url": "/dist/index.html",

@@ -93,7 +93,6 @@ class EditPanel extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.state.text === this.props.text)
       this.setState({...newProps})
   }
 
