@@ -1,7 +1,7 @@
 import '@babel/polyfill'
 
 import Aragon from '@aragon/client'
-import {get as ipfsGet, hexToIpfs} from './ipfs-util'
+import {get as ipfsGet, hexToIpfs, strToHex} from './ipfs-util'
 
 const app = new Aragon()
 
@@ -26,7 +26,7 @@ function getValue() {
   // Get current value from the contract by calling the public getter
   return new Promise(resolve => {
     app
-      .call('value')
+      .call('pages', strToHex('Main'))
       .first()
       .map(value => hexToIpfs(value))
       .subscribe(resolve)

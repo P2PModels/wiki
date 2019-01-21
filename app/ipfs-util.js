@@ -18,6 +18,10 @@ export function hexToIpfs(hex) {
   return ipfsHash;
 }
 
+export function strToHex(str) {
+  return '0x' + Buffer.from(str).toString('hex');
+}
+
 export function save(text) {
   return ipfs.add(Buffer.from(text, "utf-8"))
   .then(value => {

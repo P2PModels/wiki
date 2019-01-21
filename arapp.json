@@ -1,13 +1,18 @@
 {
   "roles": [
     {
-      "name": "Edit the wiki",
+      "name": "Edit wiki pages",
       "id": "EDIT_ROLE",
       "params": []
     },
     {
-      "name": "Decrement the counter",
-      "id": "DECREMENT_ROLE",
+      "name": "Create and edit protected wiki pages",
+      "id": "CREATE_ROLE",
+      "params": []
+    },
+    {
+      "name": "Protect and unprotect wiki pages",
+      "id": "PROTECT_ROLE",
       "params": []
     }
   ],

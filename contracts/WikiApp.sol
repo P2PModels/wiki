@@ -5,34 +5,79 @@ import "@aragon/os/contracts/apps/AragonApp.sol";
 contract WikiApp is AragonApp {
 
     /// Events
-    event Edit(address indexed entity, bytes newValue);
-    event Decrement(address indexed entity, uint256 step);
+    event Edit(address indexed entity, bytes32 page, bytes newValue);
+    event Create(address indexed entity, bytes32 page, bytes value);
+    event Delete(address indexed entity, bytes32 page);
+    event Protect(address indexed entity, bytes32 page);
+    event Unprotect(address indexed entity, bytes32 page);
 
     /// State
-    bytes public value;
+    mapping(bytes32 => bytes) public pages;
+    mapping(bytes32 => bytes32) public flags;
 
     /// ACL
     bytes32 constant public EDIT_ROLE = keccak256("EDIT_ROLE");
-    bytes32 constant public DECREMENT_ROLE = keccak256("DECREMENT_ROLE");
+    bytes32 constant public CREATE_ROLE = keccak256("CREATE_ROLE");
+    bytes32 constant public PROTECT_ROLE = keccak256("PROTECT_ROLE");
 
     function initialize() onlyInit public {
         initialized();
     }
 
     /**
-     * @notice Edit the wiki text
-     * @param newValue New hash of the text
+     * @notice Edit the wiki page `pageName` with `newValue`
+     * @param pageName Name of the page to be edited
+     * @param newValue New hash of the page
      */
-    function edit(bytes newValue) auth(EDIT_ROLE) external {
-        value = newValue;
-        emit Edit(msg.sender, newValue);
+    function edit(bytes32 pageName, bytes newValue) auth(EDIT_ROLE) external {
+        pages[pageName] = newValue;
+        emit Edit(msg.sender, pageName, newValue);
     }
 
     /**
-     * @notice Decrement the counter by `step`
-     * @param step Amount to decrement by
+     * @notice Create page `pageName` with content `value`
+     * @param pageName Name of the page to be created
+     * @param value Initial content of the page
      */
-    function decrement(uint256 step) auth(DECREMENT_ROLE) external {
-        emit Decrement(msg.sender, step);
+    function create(bytes32 pageName, bytes value) auth(CREATE_ROLE) external {
+        pages[pageName] = value;
+        emit Create(msg.sender, pageName, value);
+    }
+
+    /**
+     * @notice Edit protected page `pageName` with content `value`
+     * @param pageName Name of the page to be created
+     * @param value Initial content of the page
+     */
+    function editProtected(bytes32 pageName, bytes value) auth(CREATE_ROLE) external {
+        pages[pageName] = value;
+        emit Edit(msg.sender, pageName, value);
+    }
+
+    /**
+     * @notice Delete page `pageName`
+     * @param pageName Name of the page to be deleted
+     */
+    function deletePage(bytes32 pageName) auth(CREATE_ROLE) external {
+        delete pages[pageName];
+        emit Delete(msg.sender, pageName);
+    }
+
+    /**
+     * @notice Protect the page `pageName`
+     * @param pageName Page to be protected
+     */
+    function protect(bytes32 pageName) auth(PROTECT_ROLE) external {
+        flags[pageName] = PROTECT_ROLE;
+        emit Protect(msg.sender, pageName);
+    }
+
+    /**
+     * @notice Unprotect the page `pageName`
+     * @param pageName Page to be unprotected
+     */
+    function unprotect(bytes32 pageName) auth(PROTECT_ROLE) external {
+        flags[pageName] = EDIT_ROLE;
+        emit Unprotect(msg.sender, pageName);
     }
 }

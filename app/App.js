@@ -14,7 +14,7 @@ import Aragon, { providers } from '@aragon/client'
 import styled from 'styled-components'
 import { Observable } from 'rxjs'
 import {markdown} from 'markdown';
-import {save as ipfsSave} from './ipfs-util';
+import {save as ipfsSave, strToHex} from './ipfs-util';
 
 const AppContainer = styled(AragonApp)`
 
@@ -40,7 +40,7 @@ export default class App extends React.Component {
     }
     ipfsSave(text).then(hex => {
       const onUpdated = () => this.setState({editing: false})
-      this.props.app.edit(hex).subscribe(onUpdated)
+      this.props.app.edit(strToHex('Main'), hex).subscribe(onUpdated)
     })
   }
   render () {
