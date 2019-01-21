@@ -24,11 +24,11 @@ app.store(async (state, event) => {
 
 function getValue() {
   // Get current value from the contract by calling the public getter
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     app
       .call('pages', strToHex('Main'))
       .first()
       .map(value => hexToIpfs(value))
-      .subscribe(resolve)
+      .subscribe(resolve, reject)
   })
 }
