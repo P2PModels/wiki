@@ -6,8 +6,9 @@
     "@aragon/apps-shared-minime": "^1.0.0",
     "@aragon/apps-token-manager": "2.0.0",
     "@aragon/apps-voting": "2.0.0",
-    "@aragon/os": "4.0.1",
     "@aragon/client": "^1.1.0",
+    "@aragon/os": "4.0.1",
+    "@aragon/test-helpers": "^1.0.1",
     "@aragon/ui": "^0.16.0",
     "markdown": "^0.5.0",
     "react": "^16.7.0",
@@ -21,6 +22,10 @@
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.2.3",
     "babel-plugin-styled-components": "^1.10.0",
+    "eslint": "^5.13.0",
+    "eslint-config-standard-react": "^7.0.2",
+    "eslint-plugin-jest": "^22.2.2",
+    "eslint-plugin-react": "^7.12.4",
     "parcel-bundler": "^1.11.0"
   },
   "scripts": {

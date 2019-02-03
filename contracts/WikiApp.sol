@@ -30,6 +30,7 @@ contract WikiApp is AragonApp {
      * @param newValue New hash of the page
      */
     function edit(bytes32 pageName, bytes newValue) auth(EDIT_ROLE) external {
+        require(flags[pageName] != PROTECT_ROLE);
         pages[pageName] = newValue;
         emit Edit(msg.sender, pageName, newValue);
     }
@@ -60,6 +61,7 @@ contract WikiApp is AragonApp {
      */
     function deletePage(bytes32 pageName) auth(CREATE_ROLE) external {
         delete pages[pageName];
+        delete flags[pageName];
         emit Delete(msg.sender, pageName);
     }
 

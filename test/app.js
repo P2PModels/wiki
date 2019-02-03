@@ -1,4 +1,4 @@
-//const { assertRevert } = require('@aragon/test-helpers/assertThrow')
+const { assertRevert } = require('@aragon/test-helpers/assertThrow')
 //const timetravel = require('@aragon/test-helpers/timeTravel')(web3)
 //const getBlock = require('@aragon/test-helpers/block')(web3)
 //const getBlockNumber = require('@aragon/test-helpers/blockNumber')(web3)
@@ -59,8 +59,36 @@ contract('WikiApp', (accounts) => {
   it('should store a value', async () => {
     wiki.initialize();
     const main = web3.fromUtf8("Main")
-    const value = n
+    const value = '0x01'
     await wiki.edit(main, value);
-    assert(await wiki.pages(main), value)
+    assert.equal(await wiki.pages(main), value)
+  })
+
+  it('should create a new page and delete it', async () => {
+    wiki.initialize();
+    const test = web3.fromUtf8("Test")
+    const value = '0x02'
+    await wiki.create(test, value);
+    assert.equal(await wiki.pages(test), value)
+    await wiki.deletePage(test)
+    assert.equal(await wiki.pages(test), '0x')
+  })
+
+  it('should protect and unprotect properly a page', async () => {
+    wiki.initialize();
+    const protected = web3.fromUtf8("Protected")
+    const value = '0x03'
+    await wiki.create(protected, value)
+    await wiki.protect(protected)
+    await assertRevert(async () => {
+      return await wiki.edit(protected, '0x04', {from: holder})
+    })
+    //await assertRevert(async () =>
+      //await wiki.editProtected(protected, '0x04', {from: holder})
+    //)
+    assert.equal(await wiki.pages(protected), '0x03')
+    await wiki.unprotect(protected)
+    await wiki.edit(protected, '0x04', {from: holder})
+    assert.equal(await wiki.pages(protected), '0x04')
   })
 })
