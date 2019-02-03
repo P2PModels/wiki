@@ -44,6 +44,8 @@
     "publish:patch": "aragon apm publish patch",
     "publish:minor": "aragon apm publish minor",
     "publish:major": "aragon apm publish major",
-    "versions": "aragon apm versions"
+    "versions": "aragon apm versions",
+    "lint": "eslint app/ test/",
+    "lint:fix": "eslint app/ test/ --fix"
   }
 }
