@@ -4,47 +4,41 @@ import {
   Button,
   Text,
   Card,
-  AppBar,
   AppView,
   BaseStyles,
-
-  observe
+  observe,
 } from '@aragon/ui'
-import Aragon, { providers } from '@aragon/client'
 import styled from 'styled-components'
-import { Observable } from 'rxjs'
-import {markdown} from 'markdown';
-import {save as ipfsSave, strToHex} from './ipfs-util';
+import { markdown } from 'markdown'
+import { save as ipfsSave, strToHex } from './ipfs-util'
 
-const AppContainer = styled(AragonApp)`
-
-`
+const AppContainer = styled(AragonApp)``
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
 
 export default class App extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       editing: false,
     }
-    this.onClick = this.onClick.bind(this);
-    this.onSave = this.onSave.bind(this);
+    this.onClick = this.onClick.bind(this)
+    this.onSave = this.onSave.bind(this)
   }
   onClick() {
-    this.setState({ editing: !this.state.editing });
+    this.setState({ editing: !this.state.editing })
   }
   onSave(text) {
     if (text === false) {
-      this.setState({editing: false})
+      this.setState({ editing: false })
       return
     }
     ipfsSave(text).then(hex => {
-      const onUpdated = () => this.setState({editing: false})
+      const onUpdated = () => this.setState({ editing: false })
       this.props.app.edit(strToHex('Main'), hex).subscribe(onUpdated)
     })
   }
-  render () {
-    const shouldHide = (editing) => (editing?{display:'none'}:{})
+  render() {
+    const shouldHide = editing => (editing ? { display: 'none' } : {})
     const SpacedBlock = styled.div`
       margin-top: 30px;
       &:first-child {
@@ -56,26 +50,33 @@ export default class App extends React.Component {
       margin-bottom: 20px;
       font-weight: 600;
     `
-    const {editing} = this.state
-    const {observable} = this.props
+    const { editing } = this.state
+    const { observable } = this.props
     return (
       <AppContainer>
         <BaseStyles />
         <AppView title="DAO Wiki">
-        <div>
-          <div style={shouldHide(editing)}>
-            <SpacedBlock>
-              <Title>View Main Page</Title>
-              <ObservedViewPanel observable={observable} callback={this.onClick} />
-            </SpacedBlock>
+          <div>
+            <div style={shouldHide(editing)}>
+              <SpacedBlock>
+                <Title>View Main Page</Title>
+                <ObservedViewPanel
+                  observable={observable}
+                  callback={this.onClick}
+                />
+              </SpacedBlock>
+            </div>
+            <div style={shouldHide(!editing)}>
+              <SpacedBlock>
+                <Title>Edit Main Page</Title>
+                <ObservedEditPanel
+                  editing={editing}
+                  observable={observable}
+                  handleSubmit={this.onSave}
+                />
+              </SpacedBlock>
+            </div>
           </div>
-          <div style={shouldHide(!editing)}>
-            <SpacedBlock>
-              <Title>Edit Main Page</Title>
-              <ObservedEditPanel editing={editing} observable={observable} handleSubmit={this.onSave} />
-            </SpacedBlock>
-          </div>
-        </div>
         </AppView>
       </AppContainer>
     )
@@ -84,25 +85,25 @@ export default class App extends React.Component {
 
 class EditPanel extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = {...props};
+    super(props)
+    this.state = { ...props }
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleCancel = this.handleCancel.bind(this)
   }
 
   componentWillReceiveProps(newProps) {
-      this.setState({...newProps})
+    this.setState({ ...newProps })
   }
 
   handleChange(event) {
-    this.setState({text: event.target.value});
+    this.setState({ text: event.target.value })
   }
 
   handleSubmit(event) {
-    this.props.handleSubmit(this.state.text);
-    event.preventDefault();
+    this.props.handleSubmit(this.state.text)
+    event.preventDefault()
   }
 
   handleCancel(event) {
@@ -112,18 +113,25 @@ class EditPanel extends React.Component {
   render() {
     const textareaStyle = {
       width: '100%',
-      height: 'inherit'
+      height: 'inherit',
     }
     return (
-        <form onSubmit={this.handleSubmit}>
-          <Button mode="strong" onClick={this.handleSubmit}>Save</Button>
-          <Button type="button" onClick={this.handleCancel}>Cancel</Button>
-          <Card width="100%" >
-            <textarea value={this.state.text} onChange={this.handleChange} style={textareaStyle} />
-          </Card>
-        </form>
-
-    );
+      <form onSubmit={this.handleSubmit}>
+        <Button mode="strong" onClick={this.handleSubmit}>
+          Save
+        </Button>
+        <Button type="button" onClick={this.handleCancel}>
+          Cancel
+        </Button>
+        <Card width="100%">
+          <textarea
+            value={this.state.text}
+            onChange={this.handleChange}
+            style={textareaStyle}
+          />
+        </Card>
+      </form>
+    )
   }
 }
 
@@ -134,63 +142,79 @@ This is a censorship resistant wiki, that stores the content on IPFS and saves
 its state on the blockchain. If you are a token holder, you can edit it.
 `
 
-const obs = observe((state$) => state$, {hash: 'no hash', text})
+const obs = observe(state$ => state$, { hash: 'no hash', text })
 
 const ResetStyle = styled.div`
-font: 9pt/1.5em sans-serif;
-padding: 25px;
+  font: 9pt/1.5em sans-serif;
+  padding: 25px;
 
-pre, code, tt {
-font: 1em/1.5em 'Andale Mono', 'Lucida Console', monospace;
-}
-h1, h2, h3, h4, h5, h6, b, strong {
-font-weight: bold;
-}
-h1 {
-font-size:1.5em
-}
-em, i, dfn {
-font-style: italic;
-}
-p, code, pre, kbd {
-margin:0 0 1.5em 0;
-}
-blockquote {
-margin:0 1.5em 1.5em 1.5em;
-}
-cite {
-font-style: italic;
-}
-li ul, li ol {
-margin:0 1.5em;
-}
-ul, ol {
-margin:0 1.5em 1.5em 1.5em;
-}
-ul {
-list-style-type:disc;
-}
-ol {
-list-style-type:decimal;
-}
-del {
-text-decoration: line-through;
-}
-pre {
-margin:1.5em 0;
-white-space:pre;
-}
+  pre,
+  code,
+  tt {
+    font: 1em/1.5em 'Andale Mono', 'Lucida Console', monospace;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  b,
+  strong {
+    font-weight: bold;
+  }
+  h1 {
+    font-size: 1.5em;
+  }
+  em,
+  i,
+  dfn {
+    font-style: italic;
+  }
+  p,
+  code,
+  pre,
+  kbd {
+    margin: 0 0 1.5em 0;
+  }
+  blockquote {
+    margin: 0 1.5em 1.5em 1.5em;
+  }
+  cite {
+    font-style: italic;
+  }
+  li ul,
+  li ol {
+    margin: 0 1.5em;
+  }
+  ul,
+  ol {
+    margin: 0 1.5em 1.5em 1.5em;
+  }
+  ul {
+    list-style-type: disc;
+  }
+  ol {
+    list-style-type: decimal;
+  }
+  del {
+    text-decoration: line-through;
+  }
+  pre {
+    margin: 1.5em 0;
+    white-space: pre;
+  }
 `
-const ObservedViewPanel = obs(
-    ({hash, text, callback}) =>
-    <div>
-
-    <Button mode="strong" onClick={callback}>Edit</Button>
+const ObservedViewPanel = obs(({ hash, text, callback }) => (
+  <div>
+    <Button mode="strong" onClick={callback}>
+      Edit
+    </Button>
     <Card width="100%">
-      <ResetStyle dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }}></ResetStyle>
+      <ResetStyle dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }} />
     </Card>
     <Text.Block>{hash}</Text.Block>
-    </div>
-  )
+  </div>
+))
 
 const ObservedEditPanel = obs(EditPanel)

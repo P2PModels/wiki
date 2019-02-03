@@ -1,21 +1,21 @@
 import '@babel/polyfill'
 
 import Aragon from '@aragon/client'
-import {get as ipfsGet, hexToIpfs, strToHex} from './ipfs-util'
+import { get as ipfsGet, hexToIpfs, strToHex } from './ipfs-util'
 
 const app = new Aragon()
 
 const initialState = {
   hash: null,
-  text: ""
+  text: '',
 }
 app.store(async (state, event) => {
   if (state === null) state = initialState
 
   switch (event.event) {
     case 'Edit':
-      let hash = await getValue();
-      let text = await ipfsGet(hash);
+      let hash = await getValue()
+      let text = await ipfsGet(hash)
       return { hash, text }
     default:
       return state

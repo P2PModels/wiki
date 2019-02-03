@@ -19,7 +19,7 @@ class ConnectedApp extends React.Component {
     // See: https://github.com/parcel-bundler/parcel/issues/289
     if (module.hot) {
       module.hot.dispose(() => {
-        window.location.reload();
+        window.location.reload()
       })
     }
   }
@@ -52,7 +52,4 @@ class ConnectedApp extends React.Component {
     return <App {...this.state} />
   }
 }
-ReactDOM.render(
-  <ConnectedApp />,
-  document.getElementById('root')
-)
+ReactDOM.render(<ConnectedApp />, document.getElementById('root'))
