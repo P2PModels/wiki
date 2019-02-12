@@ -22,10 +22,17 @@ export default class App extends React.Component {
       editing: false,
     }
     this.onClick = this.onClick.bind(this)
+    this.create = this.create.bind(this)
     this.onSave = this.onSave.bind(this)
   }
   onClick() {
     this.setState({ editing: !this.state.editing })
+  }
+  create() {
+    this.props.app.create(
+      strToHex('Test'),
+      '0x49ae177d1db061d36a9eb4fb132c6e63adc8ab3ee64927387b155d039b953552'
+    )
   }
   onSave(text) {
     if (text === false) {
@@ -50,33 +57,54 @@ export default class App extends React.Component {
       margin-bottom: 20px;
       font-weight: 600;
     `
+    const Main = styled.div`
+      width: 100%;
+    `
+    const TwoPanels = styled.div`
+      display: flex;
+      width: 100%;
+      min-width: 800px;
+    `
+    const SideBar = styled.aside`
+      flex-shrink: 0;
+      flex-grow: 0;
+      width: 260px;
+      margin-left: 30px;
+      min-height: 100%;
+    `
     const { editing } = this.state
     const { observable } = this.props
     return (
       <AppContainer>
         <BaseStyles />
         <AppView title="DAO Wiki">
-          <div>
-            <div style={shouldHide(editing)}>
-              <SpacedBlock>
-                <Title>View Main Page</Title>
-                <ObservedViewPanel
-                  observable={observable}
-                  callback={this.onClick}
-                />
-              </SpacedBlock>
-            </div>
-            <div style={shouldHide(!editing)}>
-              <SpacedBlock>
-                <Title>Edit Main Page</Title>
-                <ObservedEditPanel
-                  editing={editing}
-                  observable={observable}
-                  handleSubmit={this.onSave}
-                />
-              </SpacedBlock>
-            </div>
-          </div>
+          <TwoPanels>
+            <Main>
+              <div style={shouldHide(editing)}>
+                <SpacedBlock>
+                  <Title>View Main Page</Title>
+                  <ObservedViewPanel
+                    observable={observable}
+                    callback={this.onClick}
+                  />
+                </SpacedBlock>
+              </div>
+              <div style={shouldHide(!editing)}>
+                <SpacedBlock>
+                  <Title>Edit Main Page</Title>
+                  <ObservedEditPanel
+                    editing={editing}
+                    observable={observable}
+                    handleSubmit={this.onSave}
+                  />
+                </SpacedBlock>
+              </div>
+            </Main>
+            <SideBar>
+              <h2>Pages</h2>
+              <PageList observable={observable} callback={this.create} />
+            </SideBar>
+          </TwoPanels>
         </AppView>
       </AppContainer>
     )
@@ -142,7 +170,24 @@ This is a censorship resistant wiki, that stores the content on IPFS and saves
 its state on the blockchain. If you are a token holder, you can edit it.
 `
 
-const obs = observe(state$ => state$, { hash: 'no hash', text })
+const obs = observe(state$ => state$, {
+  hash: null,
+  text,
+  pages: ['Main'],
+})
+
+const PageList = obs(({ pages, callback }) => (
+  <div>
+    <ul>
+      {pages.map(page => (
+        <li key={page}>{page}</li>
+      ))}
+    </ul>
+    <Button mode="strong" onClick={callback}>
+      Create
+    </Button>
+  </div>
+))
 
 const ResetStyle = styled.div`
   font: 9pt/1.5em sans-serif;
@@ -205,7 +250,7 @@ const ResetStyle = styled.div`
     white-space: pre;
   }
 `
-const ObservedViewPanel = obs(({ hash, text, callback }) => (
+const ObservedViewPanel = obs(({ hash = '', text = '', callback }) => (
   <div>
     <Button mode="strong" onClick={callback}>
       Edit

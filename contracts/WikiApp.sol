@@ -11,9 +11,14 @@ contract WikiApp is AragonApp {
     event Protect(address indexed entity, bytes32 page);
     event Unprotect(address indexed entity, bytes32 page);
 
+    // Types
+    struct PageStruct {
+      bytes value;
+      bytes32 flag;
+    }
+
     /// State
-    mapping(bytes32 => bytes) public pages;
-    mapping(bytes32 => bytes32) public flags;
+    mapping(bytes32 => PageStruct) public pages;
 
     /// ACL
     bytes32 constant public EDIT_ROLE = keccak256("EDIT_ROLE");
@@ -30,8 +35,8 @@ contract WikiApp is AragonApp {
      * @param newValue New hash of the page
      */
     function edit(bytes32 pageName, bytes newValue) auth(EDIT_ROLE) external {
-        require(flags[pageName] != PROTECT_ROLE);
-        pages[pageName] = newValue;
+        require(pages[pageName].flag != PROTECT_ROLE);
+        pages[pageName].value = newValue;
         emit Edit(msg.sender, pageName, newValue);
     }
 
@@ -41,7 +46,7 @@ contract WikiApp is AragonApp {
      * @param value Initial content of the page
      */
     function create(bytes32 pageName, bytes value) auth(CREATE_ROLE) external {
-        pages[pageName] = value;
+        pages[pageName] = PageStruct(value, EDIT_ROLE);
         emit Create(msg.sender, pageName, value);
     }
 
@@ -51,7 +56,7 @@ contract WikiApp is AragonApp {
      * @param value Initial content of the page
      */
     function editProtected(bytes32 pageName, bytes value) auth(CREATE_ROLE) external {
-        pages[pageName] = value;
+        pages[pageName].value = value;
         emit Edit(msg.sender, pageName, value);
     }
 
@@ -61,7 +66,6 @@ contract WikiApp is AragonApp {
      */
     function deletePage(bytes32 pageName) auth(CREATE_ROLE) external {
         delete pages[pageName];
-        delete flags[pageName];
         emit Delete(msg.sender, pageName);
     }
 
@@ -70,7 +74,7 @@ contract WikiApp is AragonApp {
      * @param pageName Page to be protected
      */
     function protect(bytes32 pageName) auth(PROTECT_ROLE) external {
-        flags[pageName] = PROTECT_ROLE;
+        pages[pageName].flag = PROTECT_ROLE;
         emit Protect(msg.sender, pageName);
     }
 
@@ -79,7 +83,7 @@ contract WikiApp is AragonApp {
      * @param pageName Page to be unprotected
      */
     function unprotect(bytes32 pageName) auth(PROTECT_ROLE) external {
-        flags[pageName] = EDIT_ROLE;
+        pages[pageName].flag = EDIT_ROLE;
         emit Unprotect(msg.sender, pageName);
     }
 }

@@ -22,6 +22,13 @@ export function strToHex(str) {
   return '0x' + Buffer.from(str).toString('hex')
 }
 
+export function hexToStr(hex) {
+  /* eslint no-control-regex: off */
+  return Buffer.from(hex.substr(2), 'hex')
+    .toString('utf8')
+    .replace(/\x00+$/, '') // remove trailing zeros
+}
+
 export function save(text) {
   return ipfs.add(Buffer.from(text, 'utf-8')).then(value => {
     console.log('http://localhost:8080/ipfs/' + value[0].hash)
