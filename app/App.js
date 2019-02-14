@@ -10,7 +10,8 @@ import {
 } from '@aragon/ui'
 import styled from 'styled-components'
 import { markdown } from 'markdown'
-import { save as ipfsSave, strToHex } from './ipfs-util'
+import { save as ipfsSave, get as ipfsGet, strToHex } from './ipfs-util'
+import unplug from 'react-unplug'
 
 const AppContainer = styled(AragonApp)``
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
@@ -20,6 +21,7 @@ export default class App extends React.Component {
     super(props)
     this.state = {
       editing: false,
+      page: 'Test',
     }
     this.onClick = this.onClick.bind(this)
     this.create = this.create.bind(this)
@@ -29,10 +31,8 @@ export default class App extends React.Component {
     this.setState({ editing: !this.state.editing })
   }
   create() {
-    this.props.app.create(
-      strToHex('Test'),
-      '0x49ae177d1db061d36a9eb4fb132c6e63adc8ab3ee64927387b155d039b953552'
-    )
+    const text = 'This is a test page.'
+    ipfsSave(text).then(hex => this.props.app.create(strToHex('Test'), hex))
   }
   onSave(text) {
     if (text === false) {
@@ -72,7 +72,7 @@ export default class App extends React.Component {
       margin-left: 30px;
       min-height: 100%;
     `
-    const { editing } = this.state
+    const { editing, page } = this.state
     const { observable } = this.props
     return (
       <AppContainer>
@@ -85,6 +85,7 @@ export default class App extends React.Component {
                   <Title>View Main Page</Title>
                   <ObservedViewPanel
                     observable={observable}
+                    title={page}
                     callback={this.onClick}
                   />
                 </SpacedBlock>
@@ -163,7 +164,7 @@ class EditPanel extends React.Component {
   }
 }
 
-const text = `
+const defaultText = `
 # This is a DAO wiki
 
 This is a censorship resistant wiki, that stores the content on IPFS and saves
@@ -171,15 +172,13 @@ its state on the blockchain. If you are a token holder, you can edit it.
 `
 
 const obs = observe(state$ => state$, {
-  hash: null,
-  text,
-  pages: ['Main'],
+  pages: { Main: null },
 })
 
 const PageList = obs(({ pages, callback }) => (
   <div>
     <ul>
-      {pages.map(page => (
+      {Object.keys(pages).map(page => (
         <li key={page}>{page}</li>
       ))}
     </ul>
@@ -250,16 +249,62 @@ const ResetStyle = styled.div`
     white-space: pre;
   }
 `
-const ObservedViewPanel = obs(({ hash = '', text = '', callback }) => (
-  <div>
-    <Button mode="strong" onClick={callback}>
-      Edit
-    </Button>
-    <Card width="100%">
-      <ResetStyle dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }} />
-    </Card>
-    <Text.Block>{hash}</Text.Block>
-  </div>
-))
 
+class ViewPanel extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { text: defaultText }
+    this.socket = unplug.socket()
+  }
+
+  getHashFromProps(props) {
+    const { title } = props
+    return props.pages[title]
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const hash = this.getHashFromProps(this.props)
+    const prevHash = this.getHashFromProps(prevProps)
+    if (hash === prevHash) {
+      return
+    }
+    hash &&
+      this.socket.plug(wire =>
+        wire(
+          ipfsGet(hash),
+          text => {
+            console.log(text)
+            this.setState({ text })
+          },
+          f => f
+        )
+      )
+  }
+
+  componentWillUnmount() {
+    this.socket.unplug()
+  }
+
+  render() {
+    const { title, callback } = this.props
+    const { text } = this.state
+    const hash = this.getHashFromProps(this.props)
+    return (
+      <div>
+        <h1>{title}</h1>
+        <Button mode="strong" onClick={callback}>
+          Edit
+        </Button>
+        <Card width="100%">
+          <ResetStyle
+            dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }}
+          />
+        </Card>
+        <Text.Block>{hash}</Text.Block>
+      </div>
+    )
+  }
+}
+
+const ObservedViewPanel = obs(ViewPanel)
 const ObservedEditPanel = obs(EditPanel)

@@ -1,19 +1,17 @@
 import '@babel/polyfill'
 
 import Aragon from '@aragon/client'
-import { get as ipfsGet, hexToIpfs, hexToStr } from './ipfs-util'
+import { hexToStr, hexToIpfs } from './ipfs-util'
 import { of } from './rxjs'
 
 const INITIALIZATION_TRIGGER = Symbol('INITIALIZATION_TRIGGER')
 const app = new Aragon()
 
 const initialState = {
-  hash: null,
-  text: '',
-  pages: ['Main'],
+  pages: { Main: null },
 }
 app.store(
-  async (state, event) => {
+  (state, event) => {
     console.log(state, event)
     const { event: eventName } = event
 
@@ -22,22 +20,29 @@ app.store(
     }
 
     switch (eventName) {
-      case 'Edit':
-        const hash = hexToIpfs(event.returnValues.newValue)
-        const text = await ipfsGet(hash)
-        return { ...state, hash, text }
-      case 'Create':
+      case 'Edit': {
+        const { page, newValue } = event.returnValues
+        const pageName = hexToStr(page)
+        const hash = hexToIpfs(newValue)
+        return { ...state, pages: { ...state.pages, [pageName]: hash } }
+      }
+      case 'Create': {
+        const { page, value } = event.returnValues
+        const pageName = hexToStr(page)
+        const hash = hexToIpfs(value)
         const newState = {
           ...state,
-          pages: [...state.pages, hexToStr(event.returnValues.page)],
+          pages: { ...state.pages, [pageName]: hash },
         }
         console.log(newState)
         return newState
-      case 'Delete':
-        return {
-          ...state,
-          pages: state.pages.filter(a => a !== event.returnValues.page),
-        }
+      }
+      case 'Delete': {
+        const { page } = event.returnValues
+        const newState = { ...state }
+        delete newState.pages[page]
+        return newState
+      }
       default:
         return state
     }
