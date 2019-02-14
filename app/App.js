@@ -16,7 +16,7 @@ import unplug from 'react-unplug'
 const AppContainer = styled(AragonApp)``
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -25,14 +25,19 @@ export default class App extends React.Component {
     }
     this.onClick = this.onClick.bind(this)
     this.create = this.create.bind(this)
+    this.changePage = this.changePage.bind(this)
     this.onSave = this.onSave.bind(this)
   }
   onClick() {
     this.setState({ editing: !this.state.editing })
   }
   create() {
+    const title = 'Test'
     const text = 'This is a test page.'
-    ipfsSave(text).then(hex => this.props.app.create(strToHex('Test'), hex))
+    ipfsSave(text).then(hex => this.props.app.create(strToHex(title), hex))
+  }
+  changePage(page) {
+    this.setState({ page })
   }
   onSave(text) {
     if (text === false) {
@@ -41,7 +46,7 @@ export default class App extends React.Component {
     }
     ipfsSave(text).then(hex => {
       const onUpdated = () => this.setState({ editing: false })
-      this.props.app.edit(strToHex('Main'), hex).subscribe(onUpdated)
+      this.props.app.edit(strToHex(this.state.page), hex).subscribe(onUpdated)
     })
   }
   render() {
@@ -73,7 +78,7 @@ export default class App extends React.Component {
       min-height: 100%;
     `
     const { editing, page } = this.state
-    const { observable } = this.props
+    const { pages } = this.props
     return (
       <AppContainer>
         <BaseStyles />
@@ -83,27 +88,27 @@ export default class App extends React.Component {
               <div style={shouldHide(editing)}>
                 <SpacedBlock>
                   <Title>View Main Page</Title>
-                  <ObservedViewPanel
-                    observable={observable}
+                  <ViewPanel
                     title={page}
                     callback={this.onClick}
+                    pages={pages}
                   />
                 </SpacedBlock>
               </div>
               <div style={shouldHide(!editing)}>
                 <SpacedBlock>
                   <Title>Edit Main Page</Title>
-                  <ObservedEditPanel
-                    editing={editing}
-                    observable={observable}
-                    handleSubmit={this.onSave}
-                  />
+                  <EditPanel editing={editing} handleSubmit={this.onSave} />
                 </SpacedBlock>
               </div>
             </Main>
             <SideBar>
               <h2>Pages</h2>
-              <PageList observable={observable} callback={this.create} />
+              <PageList
+                create={this.create}
+                change={this.changePage}
+                pages={pages}
+              />
             </SideBar>
           </TwoPanels>
         </AppView>
@@ -171,22 +176,20 @@ This is a censorship resistant wiki, that stores the content on IPFS and saves
 its state on the blockchain. If you are a token holder, you can edit it.
 `
 
-const obs = observe(state$ => state$, {
-  pages: { Main: null },
-})
-
-const PageList = obs(({ pages, callback }) => (
+const PageList = ({ pages, create, change }) => (
   <div>
     <ul>
       {Object.keys(pages).map(page => (
-        <li key={page}>{page}</li>
+        <li onClick={e => change(page)} key={page}>
+          {page}
+        </li>
       ))}
     </ul>
-    <Button mode="strong" onClick={callback}>
+    <Button mode="strong" onClick={create}>
       Create
     </Button>
   </div>
-))
+)
 
 const ResetStyle = styled.div`
   font: 9pt/1.5em sans-serif;
@@ -262,12 +265,8 @@ class ViewPanel extends React.Component {
     return props.pages[title]
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidMount() {
     const hash = this.getHashFromProps(this.props)
-    const prevHash = this.getHashFromProps(prevProps)
-    if (hash === prevHash) {
-      return
-    }
     hash &&
       this.socket.plug(wire =>
         wire(
@@ -306,5 +305,10 @@ class ViewPanel extends React.Component {
   }
 }
 
-const ObservedViewPanel = obs(ViewPanel)
-const ObservedEditPanel = obs(EditPanel)
+export default observe(
+  observable =>
+    observable.map(state => {
+      return state
+    }),
+  { pages: { Main: null } }
+)(App)
