@@ -11,7 +11,7 @@ import {
 import styled from 'styled-components'
 import { markdown } from 'markdown'
 import { save as ipfsSave, get as ipfsGet, strToHex } from './ipfs-util'
-import unplug from 'react-unplug'
+import makeCancelable from 'makecancelable'
 
 const AppContainer = styled(AragonApp)``
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
@@ -257,7 +257,6 @@ class ViewPanel extends React.Component {
   constructor(props) {
     super(props)
     this.state = { text: defaultText }
-    this.socket = unplug.socket()
   }
 
   getHashFromProps(props) {
@@ -267,21 +266,20 @@ class ViewPanel extends React.Component {
 
   componentDidMount() {
     const hash = this.getHashFromProps(this.props)
-    hash &&
-      this.socket.plug(wire =>
-        wire(
-          ipfsGet(hash),
-          text => {
-            console.log(text)
-            this.setState({ text })
-          },
-          f => f
-        )
+    if (hash) {
+      // https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
+      this.cancelIPFS = makeCancelable(ipfsGet(hash),
+        text => {
+          console.log(text)
+          this.setState({ text })
+        }
       )
+    }
   }
 
   componentWillUnmount() {
-    this.socket.unplug()
+    if (this.cancelIPFS)
+      this.cancelIPFS();
   }
 
   render() {
