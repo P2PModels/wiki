@@ -268,18 +268,15 @@ class ViewPanel extends React.Component {
     const hash = this.getHashFromProps(this.props)
     if (hash) {
       // https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
-      this.cancelIPFS = makeCancelable(ipfsGet(hash),
-        text => {
-          console.log(text)
-          this.setState({ text })
-        }
-      )
+      this.cancelIPFS = makeCancelable(ipfsGet(hash), text => {
+        console.log(text)
+        this.setState({ text })
+      })
     }
   }
 
   componentWillUnmount() {
-    if (this.cancelIPFS)
-      this.cancelIPFS();
+    if (this.cancelIPFS) this.cancelIPFS()
   }
 
   render() {
