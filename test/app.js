@@ -98,7 +98,7 @@ contract('WikiApp', accounts => {
     })
   })
 
-  it('should create a new page and delete it', async () => {
+  it('should create a new page and remove it', async () => {
     wiki.initialize()
     const test = web3.fromUtf8('Test')
     const value = '0x02'
@@ -110,16 +110,16 @@ contract('WikiApp', accounts => {
       value: value,
     })
     // assert.equal(web3.toUtf8(await wiki.pageNames(0)), 'Test')
-    const receipt2 = await wiki.deletePage(test)
+    const receipt2 = await wiki.remove(test)
     assert.equal((await wiki.pages(test))[0], '0x')
-    checkEvent(receipt2, 'Delete', {
+    checkEvent(receipt2, 'Remove', {
       entity: root,
       page: test + '0'.repeat(56),
     })
     // assert.equal(web3.toUtf8(await wiki.pageNames(0)), '')
   })
 
-  it('should store and delete the page names', async () => {
+  it('should store and remove the page names', async () => {
     wiki.initialize()
     for (let i = 1; i <= 3; i++) {
       await wiki.create(web3.fromUtf8('Test ' + i), '0x03')
@@ -127,7 +127,7 @@ contract('WikiApp', accounts => {
     for (let i = 0; i < 3; i++) {
       // assert.equal(web3.toUtf8(await wiki.pageNames(i)), 'Test ' + (i + 1))
     }
-    await wiki.deletePage(web3.fromUtf8('Test 2'))
+    await wiki.remove(web3.fromUtf8('Test 2'))
   })
 
   it('should protect and unprotect properly a page', async () => {
@@ -136,6 +136,10 @@ contract('WikiApp', accounts => {
     const value = '0x03'
     await wiki.create(protectedPage, value)
     const receipt = await wiki.protect(protectedPage)
+    assert.equal(
+      (await wiki.pages(protectedPage))[1],
+      await wiki.PROTECT_ROLE()
+    )
     checkEvent(receipt, 'Protect', {
       entity: root,
       page: protectedPage + '0'.repeat(46),

@@ -22,6 +22,7 @@ import "@aragon/apps-shared-minime/contracts/MiniMeToken.sol";
 
 import "./WikiApp.sol";
 
+
 contract KitBase is APMNamehash {
     ENS public ens;
     DAOFactory public fac;
@@ -29,7 +30,7 @@ contract KitBase is APMNamehash {
     event DeployInstance(address dao);
     event InstalledApp(address appProxy, bytes32 appId);
 
-    function KitBase(DAOFactory _fac, ENS _ens) {
+    constructor(DAOFactory _fac, ENS _ens) public {
         ens = _ens;
 
         // If no factory is passed, get it from on-chain bare-kit
@@ -49,17 +50,18 @@ contract KitBase is APMNamehash {
     }
 }
 
+
 contract Kit is KitBase {
     MiniMeTokenFactory tokenFactory;
 
     uint64 constant PCT = 10 ** 16;
     address constant ANY_ENTITY = address(-1);
 
-    function Kit(ENS ens) KitBase(DAOFactory(0), ens) {
+    constructor(ENS ens) KitBase(DAOFactory(0), ens) public {
         tokenFactory = new MiniMeTokenFactory();
     }
 
-    function newInstance() {
+    function newInstance() public {
         Kernel dao = fac.newDAO(this);
         ACL acl = ACL(dao.acl());
         acl.createPermission(this, dao, dao.APP_MANAGER_ROLE(), this);
@@ -100,6 +102,6 @@ contract Kit is KitBase {
         acl.revokePermission(this, acl, acl.CREATE_PERMISSIONS_ROLE());
         acl.setPermissionManager(root, acl, acl.CREATE_PERMISSIONS_ROLE());
 
-        DeployInstance(dao);
+        emit DeployInstance(dao);
     }
 }
