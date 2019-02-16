@@ -7,7 +7,7 @@ contract WikiApp is AragonApp {
     /// Events
     event Edit(address indexed entity, bytes32 page, bytes newValue);
     event Create(address indexed entity, bytes32 page, bytes value);
-    event Delete(address indexed entity, bytes32 page);
+    event Remove(address indexed entity, bytes32 page);
     event Protect(address indexed entity, bytes32 page);
     event Unprotect(address indexed entity, bytes32 page);
 
@@ -61,12 +61,12 @@ contract WikiApp is AragonApp {
     }
 
     /**
-     * @notice Delete page `pageName`
-     * @param pageName Name of the page to be deleted
+     * @notice Remove page `pageName`
+     * @param pageName Name of the page to be removed
      */
-    function deletePage(bytes32 pageName) auth(CREATE_ROLE) external {
+    function remove(bytes32 pageName) auth(CREATE_ROLE) external {
         delete pages[pageName];
-        emit Delete(msg.sender, pageName);
+        emit Remove(msg.sender, pageName);
     }
 
     /**

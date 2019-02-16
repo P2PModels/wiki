@@ -35,6 +35,7 @@ class App extends React.Component {
     this.handleCreate = this.handleCreate.bind(this)
     this.handlePageChange = this.handlePageChange.bind(this)
     this.handleEdit = this.handleEdit.bind(this)
+    this.handleRemove = this.handleRemove.bind(this)
   }
 
   handleSwitch() {
@@ -64,6 +65,15 @@ class App extends React.Component {
     save(text).then(hex => {
       const onUpdated = () => this.setState({ editing: false })
       app.edit(strToHex(this.state.page), hex).subscribe(onUpdated)
+    })
+  }
+
+  handleRemove(page) {
+    const { app } = this.props
+    app.remove(strToHex(page)).subscribe(() => {
+      if (page === this.state.page) {
+        this.setState({ page: 'Main' })
+      }
     })
   }
 
@@ -120,7 +130,9 @@ class App extends React.Component {
               <PageList
                 create={this.handleCreate}
                 change={this.handlePageChange}
+                remove={this.handleRemove}
                 pages={pages}
+                selectedPage={page}
               />
             </SideBar>
           </TwoPanels>
@@ -172,12 +184,22 @@ This is a censorship resistant wiki, that stores the content on IPFS and saves
 its state on the blockchain. If you are a token holder, you can edit it.
 `
 
-const PageList = ({ pages, create, change }) => (
+const PageList = ({ pages, selectedPage = 'Main', create, change, remove }) => (
   <div>
     <ul>
       {Object.keys(pages).map(page => (
         <li onClick={e => change(page)} key={page}>
-          {page}
+          {selectedPage === page ? <strong>{page}</strong> : page}
+          {page !== 'Main' && (
+            <Button
+              onClick={e => {
+                remove(page)
+                e.stopPropagation()
+              }}
+            >
+              x
+            </Button>
+          )}
         </li>
       ))}
     </ul>

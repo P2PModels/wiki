@@ -37,10 +37,24 @@ app.store(
         console.log(newState)
         return newState
       }
-      case 'Delete': {
+      case 'Remove': {
         const { page } = event.returnValues
-        const newState = { ...state }
-        delete newState.pages[page]
+        const pageName = hexToStr(page)
+        const removeKeyFromObj = (obj, keyToRemove) =>
+          Object.keys(obj)
+            .filter(key => key !== keyToRemove)
+            .reduce((o, key) => {
+              o[key] = obj[key]
+              return o
+            }, {})
+        const leaveMainPage = pages => {
+          return !pages.Main ? { ...pages, Main: null } : pages
+        }
+        const newState = {
+          ...state,
+          pages: leaveMainPage(removeKeyFromObj(state.pages, pageName)),
+        }
+        console.log(newState)
         return newState
       }
       default:
