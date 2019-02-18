@@ -36,6 +36,7 @@ class App extends React.Component {
     this.handlePageChange = this.handlePageChange.bind(this)
     this.handleEdit = this.handleEdit.bind(this)
     this.handleRemove = this.handleRemove.bind(this)
+    this.handleProtect = this.handleProtect.bind(this)
   }
 
   handleSwitch() {
@@ -61,10 +62,18 @@ class App extends React.Component {
       this.setState({ editing: false })
       return
     }
-    const { app } = this.props
+    const { page } = this.state
+    const {
+      app,
+      pages: {
+        [page]: { isProtected },
+      },
+    } = this.props
     save(text).then(hex => {
       const onUpdated = () => this.setState({ editing: false })
-      app.edit(strToHex(this.state.page), hex).subscribe(onUpdated)
+      isProtected
+        ? app.editProtected(strToHex(page), hex).subscribe(onUpdated)
+        : app.edit(strToHex(page), hex).subscribe(onUpdated)
     })
   }
 
@@ -77,9 +86,19 @@ class App extends React.Component {
     })
   }
 
+  handleProtect(page, protect) {
+    const { app } = this.props
+    const pageHex = strToHex(page)
+    if (protect) {
+      app.protect(pageHex)
+    } else {
+      app.unprotect(pageHex)
+    }
+  }
+
   getHash(props, state) {
     const { pages } = props
-    return pages[state.page]
+    return pages[state.page].hash
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -101,7 +120,7 @@ class App extends React.Component {
   render() {
     const { editing, page, text } = this.state
     const { pages } = this.props
-    const hash = pages[page]
+    const { hash, isProtected } = pages[page]
     return (
       <AragonApp>
         <BaseStyles />
@@ -112,9 +131,11 @@ class App extends React.Component {
                 {!editing ? (
                   <ViewPanel
                     handleSwitch={this.handleSwitch}
+                    handleProtect={this.handleProtect}
                     page={page}
                     hash={hash}
                     text={text}
+                    isProtected={isProtected}
                   />
                 ) : (
                   <EditPanel
@@ -209,12 +230,24 @@ const PageList = ({ pages, selectedPage = 'Main', create, change, remove }) => (
   </div>
 )
 
-const ViewPanel = ({ page, hash, text = '', handleSwitch }) => (
+const ViewPanel = ({
+  page,
+  hash,
+  isProtected,
+  text = '',
+  handleSwitch,
+  handleProtect,
+}) => (
   <div>
     <Title>View {page} Page</Title>
     <Button mode="strong" onClick={handleSwitch}>
       Edit
     </Button>
+    <ProtectButton
+      page={page}
+      isProtected={isProtected}
+      handleProtect={handleProtect}
+    />
     <Card width="100%">
       <ResetStyle dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }} />
     </Card>
@@ -222,10 +255,17 @@ const ViewPanel = ({ page, hash, text = '', handleSwitch }) => (
   </div>
 )
 
+const ProtectButton = ({ page, isProtected = false, handleProtect }) =>
+  !isProtected ? (
+    <Button onClick={e => handleProtect(page, true)}>Protect</Button>
+  ) : (
+    <Button onClick={e => handleProtect(page, false)}>Unprotect</Button>
+  )
+
 export default observe(
   observable =>
     observable.map(state => {
       return state
     }),
-  { pages: { Main: null } }
+  { pages: { Main: { hash: null } } }
 )(App)

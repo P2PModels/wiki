@@ -140,9 +140,10 @@ contract('WikiApp', accounts => {
       (await wiki.pages(protectedPage))[1],
       await wiki.PROTECT_ROLE()
     )
-    checkEvent(receipt, 'Protect', {
+    checkEvent(receipt, 'ChangePermissions', {
       entity: root,
       page: protectedPage + '0'.repeat(46),
+      isProtected: true,
     })
     await assertRevert(async () =>
       wiki.edit(protectedPage, '0x04', { from: holder })
@@ -153,11 +154,36 @@ contract('WikiApp', accounts => {
     // )
     assert.equal((await wiki.pages(protectedPage))[0], '0x03')
     const receipt2 = await wiki.unprotect(protectedPage)
-    checkEvent(receipt2, 'Unprotect', {
+    checkEvent(receipt2, 'ChangePermissions', {
       entity: root,
       page: protectedPage + '0'.repeat(46),
+      isProtected: false,
     })
     await wiki.edit(protectedPage, '0x04', { from: holder })
     assert.equal((await wiki.pages(protectedPage))[0], '0x04')
+  })
+
+  it('should be edited when editProtected called', async () => {
+    wiki.initialize()
+    const protectedPage = web3.fromUtf8('Protected')
+    const value = '0x05'
+    await wiki.create(protectedPage, value)
+    const receipt = await wiki.editProtected(protectedPage, value, {
+      from: root,
+    })
+    checkEvent(receipt, 'Edit', {
+      entity: root,
+      page: protectedPage + '0'.repeat(46),
+      newValue: value,
+    })
+  })
+
+  it('should not delete a protected page', async () => {
+    wiki.initialize()
+    const protectedPage = web3.fromUtf8('Protected')
+    const value = '0x06'
+    await wiki.create(protectedPage, value)
+    await wiki.protect(protectedPage)
+    await assertRevert(async () => wiki.remove(protectedPage, { from: root }))
   })
 })

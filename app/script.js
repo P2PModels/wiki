@@ -8,7 +8,7 @@ const INITIALIZATION_TRIGGER = Symbol('INITIALIZATION_TRIGGER')
 const app = new Aragon()
 
 const initialState = {
-  pages: { Main: null },
+  pages: { Main: { hash: null } },
 }
 app.store(
   (state, event) => {
@@ -19,12 +19,19 @@ app.store(
       state = initialState
     }
 
+    console.log(eventName)
     switch (eventName) {
       case 'Edit': {
         const { page, newValue } = event.returnValues
         const pageName = hexToStr(page)
         const hash = hexToIpfs(newValue)
-        return { ...state, pages: { ...state.pages, [pageName]: hash } }
+        return {
+          ...state,
+          pages: {
+            ...state.pages,
+            [pageName]: { ...state.pages[pageName], hash },
+          },
+        }
       }
       case 'Create': {
         const { page, value } = event.returnValues
@@ -32,7 +39,10 @@ app.store(
         const hash = hexToIpfs(value)
         const newState = {
           ...state,
-          pages: { ...state.pages, [pageName]: hash },
+          pages: {
+            ...state.pages,
+            [pageName]: { ...state.pages[pageName], hash },
+          },
         }
         console.log(newState)
         return newState
@@ -53,6 +63,19 @@ app.store(
         const newState = {
           ...state,
           pages: leaveMainPage(removeKeyFromObj(state.pages, pageName)),
+        }
+        console.log(newState)
+        return newState
+      }
+      case 'ChangePermissions': {
+        const { page, isProtected } = event.returnValues
+        const pageName = hexToStr(page)
+        const newState = {
+          ...state,
+          pages: {
+            ...state.pages,
+            [pageName]: { ...state.pages[pageName], isProtected },
+          },
         }
         console.log(newState)
         return newState

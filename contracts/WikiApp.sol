@@ -9,8 +9,7 @@ contract WikiApp is AragonApp {
     event Edit(address indexed entity, bytes32 page, bytes newValue);
     event Create(address indexed entity, bytes32 page, bytes value);
     event Remove(address indexed entity, bytes32 page);
-    event Protect(address indexed entity, bytes32 page);
-    event Unprotect(address indexed entity, bytes32 page);
+    event ChangePermissions(address indexed entity, bytes32 page, bool isProtected);
 
     // Types
     struct PageStruct {
@@ -52,7 +51,7 @@ contract WikiApp is AragonApp {
      * @param pageName Name of the page to be created
      * @param value Initial content of the page
      */
-    function editProtected(bytes32 pageName, bytes value) external auth(CREATE_ROLE) {
+    function editProtected(bytes32 pageName, bytes value) external auth(PROTECT_ROLE) {
         pages[pageName].value = value;
         emit Edit(msg.sender, pageName, value);
     }
@@ -62,6 +61,7 @@ contract WikiApp is AragonApp {
      * @param pageName Name of the page to be removed
      */
     function remove(bytes32 pageName) external auth(CREATE_ROLE) {
+        require(pages[pageName].flag != PROTECT_ROLE, "Page is protected");
         delete pages[pageName];
         emit Remove(msg.sender, pageName);
     }
@@ -72,7 +72,7 @@ contract WikiApp is AragonApp {
      */
     function protect(bytes32 pageName) external auth(PROTECT_ROLE) {
         pages[pageName].flag = PROTECT_ROLE;
-        emit Protect(msg.sender, pageName);
+        emit ChangePermissions(msg.sender, pageName, true);
     }
 
     /**
@@ -81,7 +81,7 @@ contract WikiApp is AragonApp {
      */
     function unprotect(bytes32 pageName) external auth(PROTECT_ROLE) {
         pages[pageName].flag = EDIT_ROLE;
-        emit Unprotect(msg.sender, pageName);
+        emit ChangePermissions(msg.sender, pageName, false);
     }
 
     function initialize() public onlyInit {
