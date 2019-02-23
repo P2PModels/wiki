@@ -18,7 +18,8 @@ import {
   ResetStyle,
 } from './ui-components'
 import { markdown } from 'markdown'
-import { get, save, strToHex } from './ipfs-util'
+import { utf8ToHex } from 'web3-utils'
+import { get, save } from './ipfs-util'
 import makeCancelable from 'makecancelable'
 
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
@@ -53,7 +54,7 @@ class App extends React.Component {
     const text = 'This is a test page.'
     save(text).then(hex => {
       const onSaved = () => this.setState({ page: title })
-      app.create(strToHex(title), hex).subscribe(onSaved)
+      app.create(utf8ToHex(title), hex).subscribe(onSaved)
     })
   }
 
@@ -72,14 +73,14 @@ class App extends React.Component {
     save(text).then(hex => {
       const onUpdated = () => this.setState({ editing: false })
       isProtected
-        ? app.editProtected(strToHex(page), hex).subscribe(onUpdated)
-        : app.edit(strToHex(page), hex).subscribe(onUpdated)
+        ? app.editProtected(utf8ToHex(page), hex).subscribe(onUpdated)
+        : app.edit(utf8ToHex(page), hex).subscribe(onUpdated)
     })
   }
 
   handleRemove(page) {
     const { app } = this.props
-    app.remove(strToHex(page)).subscribe(() => {
+    app.remove(utf8ToHex(page)).subscribe(() => {
       if (page === this.state.page) {
         this.setState({ page: 'Main' })
       }
@@ -88,7 +89,7 @@ class App extends React.Component {
 
   handleProtect(page, protect) {
     const { app } = this.props
-    const pageHex = strToHex(page)
+    const pageHex = utf8ToHex(page)
     if (protect) {
       app.protect(pageHex)
     } else {

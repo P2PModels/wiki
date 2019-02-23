@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer'
 import Multihashes from 'multihashes'
-import ipfsAPI from 'ipfs-api'
+import ipfsAPI from 'ipfs-http-client'
 
 var ipfs = ipfsAPI('localhost', '5001', { protocol: 'http' })
 
@@ -16,17 +16,6 @@ export function hexToIpfs(hex) {
   let buf = Multihashes.encode(dig, 'sha2-256')
   let ipfsHash = Multihashes.toB58String(buf)
   return ipfsHash
-}
-
-export function strToHex(str) {
-  return '0x' + Buffer.from(str).toString('hex')
-}
-
-export function hexToStr(hex) {
-  /* eslint no-control-regex: off */
-  return Buffer.from(hex.substr(2), 'hex')
-    .toString('utf8')
-    .replace(/\x00+$/, '') // remove trailing zeros
 }
 
 export function save(text) {

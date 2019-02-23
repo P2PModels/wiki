@@ -1,5 +1,5 @@
 {
-  "name": "app-name",
+  "name": "p2pmodels-wiki",
   "version": "1.0.0",
   "description": "",
   "dependencies": {
@@ -10,12 +10,13 @@
     "@aragon/os": "4.0.1",
     "@aragon/test-helpers": "^1.0.1",
     "@aragon/ui": "^0.16.0",
+    "ipfs-http-client": "^29.1.1",
     "makecancelable": "^1.0.0",
     "markdown": "^0.5.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-unplug": "^0.2.6",
-    "styled-components": "^3.4.10"
+    "styled-components": "^3.4.10",
+    "web3-utils": "^1.0.0-beta.46"
   },
   "devDependencies": {
     "@aragon/cli": "^5.2.2",

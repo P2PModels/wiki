@@ -1,7 +1,8 @@
 import '@babel/polyfill'
 
 import Aragon from '@aragon/client'
-import { hexToStr, hexToIpfs } from './ipfs-util'
+import { toUtf8 } from 'web3-utils'
+import { hexToIpfs } from './ipfs-util'
 import { of } from './rxjs'
 
 const INITIALIZATION_TRIGGER = Symbol('INITIALIZATION_TRIGGER')
@@ -23,7 +24,7 @@ app.store(
     switch (eventName) {
       case 'Edit': {
         const { page, newValue } = event.returnValues
-        const pageName = hexToStr(page)
+        const pageName = toUtf8(page)
         const hash = hexToIpfs(newValue)
         return {
           ...state,
@@ -35,7 +36,7 @@ app.store(
       }
       case 'Create': {
         const { page, value } = event.returnValues
-        const pageName = hexToStr(page)
+        const pageName = toUtf8(page)
         const hash = hexToIpfs(value)
         const newState = {
           ...state,
@@ -49,7 +50,7 @@ app.store(
       }
       case 'Remove': {
         const { page } = event.returnValues
-        const pageName = hexToStr(page)
+        const pageName = toUtf8(page)
         const removeKeyFromObj = (obj, keyToRemove) =>
           Object.keys(obj)
             .filter(key => key !== keyToRemove)
@@ -69,7 +70,7 @@ app.store(
       }
       case 'ChangePermissions': {
         const { page, isProtected } = event.returnValues
-        const pageName = hexToStr(page)
+        const pageName = toUtf8(page)
         const newState = {
           ...state,
           pages: {
