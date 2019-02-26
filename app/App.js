@@ -16,10 +16,10 @@ import {
   SideBar,
   Textarea,
   ResetStyle,
-} from './ui-components'
+} from './components/ui-components'
 import { markdown } from 'markdown'
 import { utf8ToHex } from 'web3-utils'
-import { get, save } from './ipfs-util'
+import { get, save } from './lib/ipfs-util'
 import makeCancelable from 'makecancelable'
 
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />

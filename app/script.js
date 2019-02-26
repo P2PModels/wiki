@@ -2,7 +2,7 @@ import '@babel/polyfill'
 
 import Aragon from '@aragon/client'
 import { toUtf8 } from 'web3-utils'
-import { hexToIpfs } from './ipfs-util'
+import { hexToIpfs } from './lib/ipfs-util'
 import { of } from './rxjs'
 
 const INITIALIZATION_TRIGGER = Symbol('INITIALIZATION_TRIGGER')
