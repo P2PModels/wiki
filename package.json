@@ -1,7 +1,7 @@
 {
   "name": "p2pmodels-wiki",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "A decentralized wiki for Aragon",
   "dependencies": {
     "@aragon/apps-shared-minime": "^1.0.0",
     "@aragon/apps-token-manager": "2.0.0",

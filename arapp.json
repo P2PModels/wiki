@@ -6,12 +6,12 @@
       "params": []
     },
     {
-      "name": "Create and edit protected wiki pages",
+      "name": "Create and delete wiki pages",
       "id": "CREATE_ROLE",
       "params": []
     },
     {
-      "name": "Protect and unprotect wiki pages",
+      "name": "Protect, unprotect, and edit protected wiki pages",
       "id": "PROTECT_ROLE",
       "params": []
     }
@@ -19,17 +19,17 @@
   "environments": {
     "default": {
       "network": "development",
-      "appName": "app.aragonpm.eth"
+      "appName": "wiki.aragonpm.eth"
     },
     "staging": {
       "registry": "0x98df287b6c145399aaa709692c8d308357bc085d",
-      "appName": "app.open.aragonpm.eth",
+      "appName": "wiki.open.aragonpm.eth",
       "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
       "network": "rinkeby"
     },
     "production": {
       "registry": "0x314159265dd8dbb310642f98f50c066173c1259b",
-      "appName": "app.open.aragonpm.eth",
+      "appName": "wiki.open.aragonpm.eth",
       "wsRPC": "wss://mainnet.eth.aragon.network/ws",
       "network": "mainnet"
     }

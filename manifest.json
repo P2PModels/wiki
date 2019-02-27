@@ -1,6 +1,6 @@
 {
   "name": "Wiki",
-  "description": "An application for Aragon",
+  "description": "A decentralized wiki for Aragon",
   "icons": [{
     "src": "images/icon.png",
     "sizes": "22x22"
