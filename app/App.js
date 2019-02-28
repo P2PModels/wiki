@@ -1,23 +1,14 @@
 import React from 'react'
-import {
-  AragonApp,
-  Button,
-  Text,
-  Card,
-  AppView,
-  BaseStyles,
-  observe,
-} from '@aragon/ui'
+import { AragonApp, AppView, BaseStyles, observe } from '@aragon/ui'
 import {
   SpacedBlock,
-  Title,
   Main,
   TwoPanels,
   SideBar,
-  Textarea,
-  ResetStyle,
 } from './components/ui-components'
-import { markdown } from 'markdown'
+import PageList from './components/page-list'
+import EditPanel from './components/edit-panel'
+import ViewPanel from './components/view-panel'
 import { utf8ToHex } from 'web3-utils'
 import { get, save } from './lib/ipfs-util'
 import makeCancelable from 'makecancelable'
@@ -164,104 +155,12 @@ class App extends React.Component {
   }
 }
 
-class EditPanel extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { ...props }
-  }
-
-  componentWillReceiveProps(newProps) {
-    this.setState({ ...newProps })
-  }
-
-  render() {
-    const { text } = this.state
-    const { handleEdit, page } = this.props
-    return (
-      <div>
-        <Title>Edit {page} Page</Title>
-        <form onSubmit={e => e.preventDefault()}>
-          <Button mode="strong" onClick={e => handleEdit(text)}>
-            Save
-          </Button>
-          <Button type="button" onClick={e => handleEdit(false)}>
-            Cancel
-          </Button>
-          <Card width="100%">
-            <Textarea
-              value={text}
-              onChange={e => this.setState({ text: e.target.value })}
-            />
-          </Card>
-        </form>
-      </div>
-    )
-  }
-}
-
 const defaultText = `
 # This is a DAO wiki
 
 This is a censorship resistant wiki, that stores the content on IPFS and saves
 its state on the blockchain. If you are a token holder, you can edit it.
 `
-
-const PageList = ({ pages, selectedPage = 'Main', create, change, remove }) => (
-  <div>
-    <ul>
-      {Object.keys(pages).map(page => (
-        <li onClick={e => change(page)} key={page}>
-          {selectedPage === page ? <strong>{page}</strong> : page}
-          {page !== 'Main' && (
-            <Button
-              onClick={e => {
-                remove(page)
-                e.stopPropagation()
-              }}
-            >
-              x
-            </Button>
-          )}
-        </li>
-      ))}
-    </ul>
-    <Button mode="strong" onClick={create}>
-      Create
-    </Button>
-  </div>
-)
-
-const ViewPanel = ({
-  page,
-  hash,
-  isProtected,
-  text = '',
-  handleSwitch,
-  handleProtect,
-}) => (
-  <div>
-    <Title>View {page} Page</Title>
-    <Button mode="strong" onClick={handleSwitch}>
-      Edit
-    </Button>
-    <ProtectButton
-      page={page}
-      isProtected={isProtected}
-      handleProtect={handleProtect}
-    />
-    <Card width="100%">
-      <ResetStyle dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }} />
-    </Card>
-    <Text.Block>{hash}</Text.Block>
-  </div>
-)
-
-const ProtectButton = ({ page, isProtected = false, handleProtect }) =>
-  !isProtected ? (
-    <Button onClick={e => handleProtect(page, true)}>Protect</Button>
-  ) : (
-    <Button onClick={e => handleProtect(page, false)}>Unprotect</Button>
-  )
 
 export default observe(
   observable =>
