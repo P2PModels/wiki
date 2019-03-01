@@ -26,7 +26,7 @@ contract WikiApp is AragonApp {
     bytes32 constant public PROTECT_ROLE = keccak256("PROTECT_ROLE");
 
     /**
-     * @notice Edit the wiki page `pageName` with `newValue`
+     * @notice Edit the "`@fromHex(pageName)`" wiki page
      * @param pageName Name of the page to be edited
      * @param newValue New hash of the page
      */
@@ -37,7 +37,7 @@ contract WikiApp is AragonApp {
     }
 
     /**
-     * @notice Create page `pageName` with content `value`
+     * @notice Create a "`@fromHex(pageName)`" wiki page
      * @param pageName Name of the page to be created
      * @param value Initial content of the page
      */
@@ -47,7 +47,7 @@ contract WikiApp is AragonApp {
     }
 
     /**
-     * @notice Edit protected page `pageName` with content `value`
+     * @notice Edit "`@fromHex(pageName)`" protected wiki page
      * @param pageName Name of the page to be created
      * @param value Initial content of the page
      */
@@ -57,7 +57,7 @@ contract WikiApp is AragonApp {
     }
 
     /**
-     * @notice Remove page `pageName`
+     * @notice Remove the "`@fromHex(pageName)`" wiki page
      * @param pageName Name of the page to be removed
      */
     function remove(bytes32 pageName) external auth(CREATE_ROLE) {
@@ -67,7 +67,7 @@ contract WikiApp is AragonApp {
     }
 
     /**
-     * @notice Protect the page `pageName`
+     * @notice Protect the "`@fromHex(pageName)`" wiki page
      * @param pageName Page to be protected
      */
     function protect(bytes32 pageName) external auth(PROTECT_ROLE) {
@@ -76,7 +76,7 @@ contract WikiApp is AragonApp {
     }
 
     /**
-     * @notice Unprotect the page `pageName`
+     * @notice Unprotect the "`@fromHex(pageName)`" wiki page
      * @param pageName Page to be unprotected
      */
     function unprotect(bytes32 pageName) external auth(PROTECT_ROLE) {
