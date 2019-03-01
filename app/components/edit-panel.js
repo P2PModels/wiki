@@ -7,7 +7,11 @@ import styled from 'styled-components'
 class EditPanel extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { ...props }
+    if (props.mode === 'create') {
+      this.state = { ...props, page: '', text: '' }
+    } else {
+      this.state = { ...props }
+    }
   }
 
   componentWillReceiveProps(newProps) {
@@ -15,22 +19,34 @@ class EditPanel extends React.Component {
   }
 
   render() {
-    const { text } = this.state
-    const { handleEdit, page } = this.props
+    const { text, page } = this.state
+    const { handleSubmit, mode } = this.props
     return (
       <Main>
         <Card className="padded" width="100%" height="100%">
           <form onSubmit={e => e.preventDefault()}>
-            <TitleTextInput value={page} onChange={f => f} disabled wide />
+            <TextInput
+              value={page}
+              onChange={e => this.setState({ page: e.target.value })}
+              disabled={mode === 'edit'}
+              placeholder={mode === 'create' ? 'New Page' : ''}
+              autoFocus={mode === 'create'}
+              wide
+            />
             <Textarea
               value={text}
               onChange={e => this.setState({ text: e.target.value })}
+              autoFocus={mode === 'edit'}
             />
             <Buttons>
-              <Button mode="strong" onClick={e => handleEdit(text)}>
+              <Button mode="strong" onClick={e => handleSubmit(page, text)}>
                 Save
               </Button>
-              <Button type="button" onClick={e => handleEdit(false)}>
+              <Button
+                type="button"
+                mode="outline"
+                onClick={e => handleSubmit(false)}
+              >
                 Cancel
               </Button>
             </Buttons>
@@ -53,20 +69,21 @@ const Main = styled.div`
     height: 100%;
     display: flex;
     flex-direction: column;
+    input[type='text'] {
+      font-size: 2em;
+      margin-bottom: 5px;
+    }
     textarea {
       flex-grow: 1;
     }
   }
 `
 const Buttons = styled.div`
+  margin-top: 8px;
   button {
     float: right;
+    margin-left: 5px;
   }
-`
-
-const TitleTextInput = styled(TextInput)`
-  font-size: 2em;
-  margin-bottom: 5px;
 `
 
 export default EditPanel

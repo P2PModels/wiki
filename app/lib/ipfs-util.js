@@ -19,11 +19,14 @@ export function hexToIpfs(hex) {
 }
 
 export function save(text) {
-  return ipfs.add(Buffer.from(text, 'utf-8')).then(value => {
-    console.log('http://localhost:8080/ipfs/' + value[0].hash)
-    let hex = ipfsToHex(value[0].hash)
-    return hex
-  })
+  return ipfs
+    .add(Buffer.from(text, 'utf-8'))
+    .then(value => ipfs.pin.add(value[0].hash))
+    .then(value => {
+      console.log('http://localhost:8080/ipfs/' + value[0].hash)
+      let hex = ipfsToHex(value[0].hash)
+      return hex
+    })
 }
 
 export function get(hash) {

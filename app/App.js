@@ -12,11 +12,9 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      editing: false,
-      page: 'Main',
-      text: defaultText,
+      mode: 'view',
+      page: 'Welcome',
     }
-    this.handleSwitch = this.handleSwitch.bind(this)
     this.handleCreate = this.handleCreate.bind(this)
     this.handlePageChange = this.handlePageChange.bind(this)
     this.handleEdit = this.handleEdit.bind(this)
@@ -24,38 +22,35 @@ class App extends React.Component {
     this.handleProtect = this.handleProtect.bind(this)
   }
 
-  handleSwitch() {
-    this.setState({ editing: !this.state.editing })
-  }
-
   handlePageChange(page) {
     this.setState({ page })
   }
 
-  handleCreate() {
+  handleCreate(page, text) {
+    if (page === true || page === false) {
+      this.setState({ mode: page ? 'create' : 'view' })
+      return
+    }
     const { app } = this.props
-    const title = 'Test'
-    const text = 'This is a test page.'
     save(text).then(hex => {
-      const onSaved = () => this.setState({ page: title })
-      app.create(utf8ToHex(title), hex).subscribe(onSaved)
+      const onSaved = () => this.setState({ page: page, mode: 'view' })
+      app.create(utf8ToHex(page), hex).subscribe(onSaved)
     })
   }
 
-  handleEdit(text) {
-    if (text === false) {
-      this.setState({ editing: false })
+  handleEdit(page, text) {
+    if (page === true || page === false) {
+      this.setState({ mode: page ? 'edit' : 'view' })
       return
     }
-    const { page } = this.state
+    console.log(page, this.props)
     const {
       app,
-      pages: {
-        [page]: { isProtected },
-      },
+      pages: { [page]: value },
     } = this.props
+    const isProtected = value ? value.isProtected : false
     save(text).then(hex => {
-      const onUpdated = () => this.setState({ editing: false })
+      const onUpdated = () => this.setState({ mode: 'view' })
       isProtected
         ? app.editProtected(utf8ToHex(page), hex).subscribe(onUpdated)
         : app.edit(utf8ToHex(page), hex).subscribe(onUpdated)
@@ -83,7 +78,8 @@ class App extends React.Component {
 
   getHash(props, state) {
     const { pages } = props
-    return pages[state.page].hash
+    const page = pages[state.page]
+    return page ? page.hash : null
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -103,18 +99,20 @@ class App extends React.Component {
   }
 
   render() {
-    const { editing, page, text } = this.state
+    const { mode, page, text } = this.state
     const { pages } = this.props
     const { hash, isProtected } = pages[page]
+      ? pages[page]
+      : { hash: null, isProtected: false }
     return (
       <div>
         <BaseStyles />
         <AppView title="DAO Wiki">
           <TwoPanels>
             <Main>
-              {!editing ? (
+              {mode === 'view' ? (
                 <ViewPanel
-                  handleSwitch={this.handleSwitch}
+                  handleEdit={() => this.handleEdit(true)}
                   handleProtect={this.handleProtect}
                   handleRemove={this.handleRemove}
                   page={page}
@@ -126,12 +124,15 @@ class App extends React.Component {
                 <EditPanel
                   page={page}
                   text={text}
-                  handleEdit={this.handleEdit}
+                  mode={mode}
+                  handleSubmit={
+                    mode === 'edit' ? this.handleEdit : this.handleCreate
+                  }
                 />
               )}
             </Main>
             <PageList
-              create={this.handleCreate}
+              create={() => this.handleCreate(true)}
               change={this.handlePageChange}
               pages={pages}
               selectedPage={page}
@@ -143,17 +144,10 @@ class App extends React.Component {
   }
 }
 
-const defaultText = `
-## This is a DAO wiki
-
-This is a censorship resistant wiki, that stores the content on IPFS and saves
-its state on the blockchain. If you are a token holder, you can edit it.
-`
-
 export default observe(
   observable =>
     observable.map(state => {
       return state
     }),
-  { pages: { Main: { hash: null } } }
+  { pages: {} }
 )(App)

@@ -12,48 +12,63 @@ import { Title, ResetStyle, ActionLabel, IconWrapper } from './ui-components'
 import styled from 'styled-components'
 import { markdown } from 'markdown'
 
+const defaultPage = 'Welcome'
+
+const defaultText = `
+This is a censorship resistant wiki, that stores the content on IPFS and saves
+its state on the blockchain. If you are a token holder, you can edit it.
+`
+
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
 export const ViewPanel = ({
   page,
   hash,
-  isProtected,
-  text = '',
-  handleSwitch,
+  isProtected = false,
+  text = defaultText,
+  handleEdit,
+  handleCreate,
   handleProtect,
   handleRemove,
 }) => (
   <Main>
     <Card width="100%" className="padded">
-      <PageActions>
-        <Button onClick={handleSwitch} mode="text">
-          Edit
-        </Button>
-        <ProtectButton
-          page={page}
-          isProtected={isProtected}
-          handleProtect={handleProtect}
-        />
-        <div className="inline-block">
-          <ContextMenu>
-            <ContextMenuItem onClick={() => openIpfs(hash)}>
-              <IconWrapper>
-                <IconCopy />
-              </IconWrapper>
-              <ActionLabel>
-                <SafeLink href={getIpfs(hash)}>View on IPFS</SafeLink>
-              </ActionLabel>
-            </ContextMenuItem>
-            <ContextMenuItem onClick={handleRemove}>
-              <IconWrapper>
-                <IconRemove />
-              </IconWrapper>
-              <ActionLabel>Remove Page</ActionLabel>
-            </ContextMenuItem>
-          </ContextMenu>
-        </div>
-      </PageActions>
+      {hash && (
+        <PageActions>
+          <Button onClick={handleEdit} mode="text">
+            Edit
+          </Button>
+          <ProtectButton
+            page={page || defaultPage}
+            isProtected={isProtected}
+            handleProtect={handleProtect}
+          />
+          <div className="inline-block">
+            <ContextMenu>
+              <ContextMenuItem onClick={() => openIpfs(hash)}>
+                <IconWrapper>
+                  <IconCopy />
+                </IconWrapper>
+                <ActionLabel>
+                  <SafeLink href={getIpfs(hash)}>View on IPFS</SafeLink>
+                </ActionLabel>
+              </ContextMenuItem>
+              <ContextMenuItem onClick={handleRemove}>
+                <IconWrapper>
+                  <IconRemove />
+                </IconWrapper>
+                <ActionLabel>Remove Page</ActionLabel>
+              </ContextMenuItem>
+            </ContextMenu>
+          </div>
+        </PageActions>
+      )}
       <Title>{page}</Title>
       <ResetStyle dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }} />
+      {!hash ? (
+        <Button mode="strong" onClick={handleEdit}>
+          Create Page
+        </Button>
+      ) : null}
     </Card>
   </Main>
 )

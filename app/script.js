@@ -9,7 +9,7 @@ const INITIALIZATION_TRIGGER = Symbol('INITIALIZATION_TRIGGER')
 const app = new Aragon()
 
 const initialState = {
-  pages: { Main: { hash: null } },
+  pages: {},
 }
 app.store(
   (state, event) => {

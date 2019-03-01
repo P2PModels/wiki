@@ -4,28 +4,32 @@ import { Button, Text, IconAdd, theme } from '@aragon/ui'
 import { IconWrapper } from './ui-components'
 import styled from 'styled-components'
 
-const PageList = ({ pages, selectedPage = 'Main', create, change }) => (
+const PageList = ({ pages, selectedPage = 'Welcome', create, change }) => (
   <Main>
-    <h1>
-      <Text color={theme.textSecondary} smallcaps>
-        Outline
-      </Text>
-      <Button onClick={create} mode="text">
-        <IconWrapper>
-          <IconAdd />
-        </IconWrapper>
-        <span className="action-label">Create page</span>
-      </Button>
-    </h1>
-    <ul>
-      {Object.keys(pages).map(page => (
-        <li key={page}>
-          <Button mode="text" onClick={e => change(page)}>
-            {selectedPage === page ? <strong>{page}</strong> : page}
+    {Object.keys(pages).length > 0 ? (
+      <div>
+        <h1>
+          <Text color={theme.textSecondary} smallcaps>
+            Outline
+          </Text>
+          <Button onClick={create} mode="text">
+            <IconWrapper>
+              <IconAdd />
+            </IconWrapper>
+            <span className="action-label">Create page</span>
           </Button>
-        </li>
-      ))}
-    </ul>
+        </h1>
+        <ul>
+          {Object.keys(pages).map(page => (
+            <li key={page}>
+              <Button mode="text" wide onClick={e => change(page)}>
+                {selectedPage === page ? <strong>{page}</strong> : page}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null}
   </Main>
 )
 
@@ -52,6 +56,16 @@ const Main = styled.aside`
       }
       .action-label {
         vertical-align: 5px;
+      }
+    }
+  }
+  ul {
+    list-style-type: none;
+    button {
+      text-align: left;
+      &:hover {
+        color: ${theme.selectionForeground};
+        background-color: ${theme.infoBackground};
       }
     }
   }
