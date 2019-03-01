@@ -23,7 +23,7 @@ class App extends React.Component {
   }
 
   handlePageChange(page) {
-    this.setState({ page })
+    this.setState({ page, mode: 'view' })
   }
 
   handleCreate(page, text) {

@@ -15,7 +15,11 @@ class EditPanel extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    this.setState({ ...newProps })
+    const state =
+      newProps.mode === 'create'
+        ? { ...newProps, page: '', text: '' }
+        : { ...newProps }
+    this.setState(state)
   }
 
   render() {
