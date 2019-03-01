@@ -1,7 +1,9 @@
 import styled from 'styled-components'
+import { theme } from '@aragon/ui'
 
 const SpacedBlock = styled.div`
   margin-top: 30px;
+  height: 100%;
   &:first-child {
     margin-top: 0;
   }
@@ -10,6 +12,7 @@ const Title = styled.h1`
   margin-top: 10px;
   margin-bottom: 20px;
   font-weight: 600;
+  font-size: 22px;
 `
 const Main = styled.div`
   width: 100%;
@@ -18,6 +21,7 @@ const TwoPanels = styled.div`
   display: flex;
   width: 100%;
   min-width: 800px;
+  flex-grow: 1;
 `
 const SideBar = styled.aside`
   flex-shrink: 0;
@@ -29,12 +33,24 @@ const SideBar = styled.aside`
 
 const Textarea = styled.textarea`
   width: 100%;
-  height: inherit;
+`
+
+const ActionLabel = styled.span`
+  margin-left: 15px;
+  a {
+    text-decoration: none;
+  }
+`
+
+const IconWrapper = styled.span`
+  display: flex;
+  align-content: center;
+  margin-top: -3px;
+  color: ${theme.textSecondary};
 `
 
 const ResetStyle = styled.div`
   font: 9pt/1.5em sans-serif;
-  padding: 25px;
 
   pre,
   code,
@@ -93,4 +109,14 @@ const ResetStyle = styled.div`
     white-space: pre;
   }
 `
-export { SpacedBlock, Title, Main, TwoPanels, SideBar, Textarea, ResetStyle }
+export {
+  SpacedBlock,
+  Title,
+  Main,
+  TwoPanels,
+  SideBar,
+  Textarea,
+  ResetStyle,
+  ActionLabel,
+  IconWrapper,
+}

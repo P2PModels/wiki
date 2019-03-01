@@ -1,19 +1,12 @@
 import React from 'react'
-import { AragonApp, AppView, BaseStyles, observe } from '@aragon/ui'
-import {
-  SpacedBlock,
-  Main,
-  TwoPanels,
-  SideBar,
-} from './components/ui-components'
+import { AppView, BaseStyles, observe } from '@aragon/ui'
+import { Main, TwoPanels } from './components/ui-components'
 import PageList from './components/page-list'
 import EditPanel from './components/edit-panel'
-import ViewPanel from './components/view-panel'
+import { ViewPanel } from './components/view-panel'
 import { utf8ToHex } from 'web3-utils'
 import { get, save } from './lib/ipfs-util'
 import makeCancelable from 'makecancelable'
-
-// Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
 
 class App extends React.Component {
   constructor(props) {
@@ -114,49 +107,44 @@ class App extends React.Component {
     const { pages } = this.props
     const { hash, isProtected } = pages[page]
     return (
-      <AragonApp>
+      <div>
         <BaseStyles />
         <AppView title="DAO Wiki">
           <TwoPanels>
             <Main>
-              <SpacedBlock>
-                {!editing ? (
-                  <ViewPanel
-                    handleSwitch={this.handleSwitch}
-                    handleProtect={this.handleProtect}
-                    page={page}
-                    hash={hash}
-                    text={text}
-                    isProtected={isProtected}
-                  />
-                ) : (
-                  <EditPanel
-                    page={page}
-                    text={text}
-                    handleEdit={this.handleEdit}
-                  />
-                )}
-              </SpacedBlock>
+              {!editing ? (
+                <ViewPanel
+                  handleSwitch={this.handleSwitch}
+                  handleProtect={this.handleProtect}
+                  handleRemove={this.handleRemove}
+                  page={page}
+                  hash={hash}
+                  text={text}
+                  isProtected={isProtected}
+                />
+              ) : (
+                <EditPanel
+                  page={page}
+                  text={text}
+                  handleEdit={this.handleEdit}
+                />
+              )}
             </Main>
-            <SideBar>
-              <h2>Pages</h2>
-              <PageList
-                create={this.handleCreate}
-                change={this.handlePageChange}
-                remove={this.handleRemove}
-                pages={pages}
-                selectedPage={page}
-              />
-            </SideBar>
+            <PageList
+              create={this.handleCreate}
+              change={this.handlePageChange}
+              pages={pages}
+              selectedPage={page}
+            />
           </TwoPanels>
         </AppView>
-      </AragonApp>
+      </div>
     )
   }
 }
 
 const defaultText = `
-# This is a DAO wiki
+## This is a DAO wiki
 
 This is a censorship resistant wiki, that stores the content on IPFS and saves
 its state on the blockchain. If you are a token holder, you can edit it.
