@@ -13,10 +13,10 @@ const PageList = ({ pages, selectedPage = 'Welcome', create, change }) => (
             Outline
           </Text>
           <Button onClick={create} mode="text">
-            <IconWrapper>
+            <IconWrapper className="accent">
               <IconAdd />
             </IconWrapper>
-            <span className="action-label">Create page</span>
+            <span className="action-label accent">Create page</span>
           </Button>
         </h1>
         <ul>
@@ -39,6 +39,9 @@ const Main = styled.aside`
   width: 260px;
   margin-left: 30px;
   min-height: 100%;
+  .accent {
+    color: ${theme.accent};
+  }
   h1 {
     margin-bottom: 15px;
     color: ${theme.textSecondary};

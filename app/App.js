@@ -32,7 +32,7 @@ class App extends React.Component {
       return
     }
     const { app } = this.props
-    save(text).then(hex => {
+    save(page, text).then(hex => {
       const onSaved = () => this.setState({ page: page, mode: 'view' })
       app.create(utf8ToHex(page), hex).subscribe(onSaved)
     })
@@ -49,7 +49,7 @@ class App extends React.Component {
       pages: { [page]: value },
     } = this.props
     const isProtected = value ? value.isProtected : false
-    save(text).then(hex => {
+    save(page, text).then(hex => {
       const onUpdated = () => this.setState({ mode: 'view' })
       isProtected
         ? app.editProtected(utf8ToHex(page), hex).subscribe(onUpdated)

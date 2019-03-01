@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 import { theme } from '@aragon/ui'
+import IconEdit from '../icons/components/IconEdit'
+import IconProtect from '../icons/components/IconProtect'
 
 const SpacedBlock = styled.div`
   margin-top: 30px;
@@ -26,7 +28,7 @@ const TwoPanels = styled.div`
 const SideBar = styled.aside`
   flex-shrink: 0;
   flex-grow: 0;
-  width: 260px;
+  width: 16.66%;
   margin-left: 30px;
   min-height: 100%;
 `
@@ -47,10 +49,13 @@ const IconWrapper = styled.span`
   align-content: center;
   margin-top: -3px;
   color: ${theme.textSecondary};
+  &.accent {
+    color: ${theme.accent};
+  }
 `
 
 const ResetStyle = styled.div`
-  font: 9pt/1.5em sans-serif;
+  font: 15px sans-serif;
 
   pre,
   code,
@@ -119,4 +124,6 @@ export {
   ResetStyle,
   ActionLabel,
   IconWrapper,
+  IconEdit,
+  IconProtect,
 }

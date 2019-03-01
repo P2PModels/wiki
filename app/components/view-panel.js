@@ -7,24 +7,25 @@ import {
   IconCopy,
   IconRemove,
   SafeLink,
+  theme,
 } from '@aragon/ui'
-import { Title, ResetStyle, ActionLabel, IconWrapper } from './ui-components'
+import {
+  Title,
+  ResetStyle,
+  ActionLabel,
+  IconWrapper,
+  IconEdit,
+  IconProtect,
+} from './ui-components'
 import styled from 'styled-components'
 import { markdown } from 'markdown'
-
-const defaultPage = 'Welcome'
-
-const defaultText = `
-This is a censorship resistant wiki, that stores the content on IPFS and saves
-its state on the blockchain. If you are a token holder, you can edit it.
-`
 
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
 export const ViewPanel = ({
   page,
   hash,
   isProtected = false,
-  text = defaultText,
+  text = '',
   handleEdit,
   handleCreate,
   handleProtect,
@@ -34,22 +35,25 @@ export const ViewPanel = ({
     <Card width="100%" className="padded">
       {hash && (
         <PageActions>
-          <Button onClick={handleEdit} mode="text">
-            Edit
+          <Button onClick={handleEdit} mode="text" className="accent">
+            <IconEdit />
+            <span className="label">Edit</span>
           </Button>
           <ProtectButton
-            page={page || defaultPage}
+            page={page}
             isProtected={isProtected}
             handleProtect={handleProtect}
           />
-          <div className="inline-block">
+          <div className="context-menu">
             <ContextMenu>
               <ContextMenuItem onClick={() => openIpfs(hash)}>
                 <IconWrapper>
                   <IconCopy />
                 </IconWrapper>
                 <ActionLabel>
-                  <SafeLink href={getIpfs(hash)}>View on IPFS</SafeLink>
+                  <SafeLink href={getIpfs(hash)} target="_blank">
+                    View on IPFS
+                  </SafeLink>
                 </ActionLabel>
               </ContextMenuItem>
               <ContextMenuItem onClick={handleRemove}>
@@ -62,13 +66,28 @@ export const ViewPanel = ({
           </div>
         </PageActions>
       )}
-      <Title>{page}</Title>
-      <ResetStyle dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }} />
-      {!hash ? (
-        <Button mode="strong" onClick={handleEdit}>
-          Create Page
-        </Button>
-      ) : null}
+      {hash ? (
+        <div>
+          <Title>{page}</Title>
+          <ResetStyle
+            dangerouslySetInnerHTML={{ __html: markdown.toHTML(text) }}
+          />
+        </div>
+      ) : (
+        <div>
+          <Title>Welcome</Title>
+          <ResetStyle>
+            This is a censorship resistant wiki, that stores the content on IPFS
+            its state on the blockchain. If you are a token holder, you can edit
+            it.
+          </ResetStyle>
+          <div className="padded-vertically">
+            <Button mode="strong" onClick={handleEdit}>
+              Create Page
+            </Button>
+          </div>
+        </div>
+      )}
     </Card>
   </Main>
 )
@@ -89,20 +108,54 @@ const Main = styled.div`
   div:first-child {
     flex-grow: 1;
   }
-  .inline-block {
+  .context-menu {
     display: inline-block;
+    vertical-align: 6px;
+    margin-left: 15px;
   }
   .padded {
     padding: 34px;
   }
+  .padded-vertically {
+    padding: 34px 0;
+  }
 `
 
-const ProtectButton = ({ page, isProtected = false, handleProtect }) => (
-  <Button onClick={e => handleProtect(page, !isProtected)} mode="text">
-    {isProtected ? 'Unprotect' : 'Protect'}
-  </Button>
-)
+const ProtectButton = ({ page, isProtected = false, handleProtect }) =>
+  isProtected ? (
+    <Button
+      onClick={e => handleProtect(page, !isProtected)}
+      mode="text"
+      className="protected"
+      title="Unprotect"
+    >
+      <IconProtect />
+    </Button>
+  ) : (
+    <Button
+      onClick={e => handleProtect(page, !isProtected)}
+      mode="text"
+      className="unprotected"
+      title="Protect"
+    >
+      <IconProtect />
+    </Button>
+  )
 
 const PageActions = styled.div`
   float: right;
+  button {
+    &.accent {
+      color: ${theme.accent};
+    }
+    &.protected:not(:hover),
+    &.unprotected:hover {
+      color: ${theme.positive};
+    }
+    font-size: 15px;
+    .label {
+      padding-left: 5px;
+      vertical-align: 3px;
+    }
+  }
 `

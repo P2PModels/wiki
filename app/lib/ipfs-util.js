@@ -18,9 +18,13 @@ export function hexToIpfs(hex) {
   return ipfsHash
 }
 
-export function save(text) {
+export function save(title, text) {
+  const file = `# ${title}
+
+${text}
+`
   return ipfs
-    .add(Buffer.from(text, 'utf-8'))
+    .add(Buffer.from(file, 'utf-8'))
     .then(value => ipfs.pin.add(value[0].hash))
     .then(value => {
       console.log('http://localhost:8080/ipfs/' + value[0].hash)
@@ -29,6 +33,10 @@ export function save(text) {
     })
 }
 
+const withoutTitle = string => string.substring(string.indexOf('\n') + 2)
+
 export function get(hash) {
-  return ipfs.get(hash).then(value => value[0].content.toString('utf-8'))
+  return ipfs
+    .get(hash)
+    .then(value => withoutTitle(value[0].content.toString('utf-8')))
 }
