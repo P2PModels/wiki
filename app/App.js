@@ -48,7 +48,7 @@ class App extends React.Component {
       app,
       pages: { [page]: value },
     } = this.props
-    const isProtected = value ? value.isProtected : false
+    const isProtected = value && value.isProtected
     save(page, text).then(hex => {
       const onUpdated = () => this.setState({ mode: 'view' })
       isProtected
@@ -61,7 +61,7 @@ class App extends React.Component {
     const { app } = this.props
     app.remove(utf8ToHex(page)).subscribe(() => {
       if (page === this.state.page) {
-        this.setState({ page: 'Main' })
+        this.setState({ page: 'Welcome' })
       }
     })
   }
@@ -114,7 +114,7 @@ class App extends React.Component {
                 <ViewPanel
                   handleEdit={() => this.handleEdit(true)}
                   handleProtect={this.handleProtect}
-                  handleRemove={this.handleRemove}
+                  handleRemove={() => this.handleRemove(page)}
                   page={page}
                   hash={hash}
                   text={text}

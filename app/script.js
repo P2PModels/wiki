@@ -58,12 +58,9 @@ app.store(
               o[key] = obj[key]
               return o
             }, {})
-        const leaveMainPage = pages => {
-          return !pages.Main ? { ...pages, Main: null } : pages
-        }
         const newState = {
           ...state,
-          pages: leaveMainPage(removeKeyFromObj(state.pages, pageName)),
+          pages: removeKeyFromObj(state.pages, pageName),
         }
         console.log(newState)
         return newState
