@@ -2,7 +2,7 @@ import { Buffer } from 'buffer'
 import Multihashes from 'multihashes'
 import ipfsAPI from 'ipfs-http-client'
 
-var ipfs = ipfsAPI('localhost', '5001', { protocol: 'http' })
+export var ipfs = ipfsAPI('localhost', '5001', { protocol: 'http' })
 
 export function ipfsToHex(ipfsHash) {
   let buf = Multihashes.fromB58String(ipfsHash)

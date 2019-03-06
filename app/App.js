@@ -4,6 +4,7 @@ import { Main, TwoPanels } from './components/ui-components'
 import PageList from './components/page-list'
 import EditPanel from './components/edit-panel'
 import { ViewPanel } from './components/view-panel'
+import IpfsIsConnected from './components/ipfs'
 import { utf8ToHex } from 'web3-utils'
 import { get, save } from './lib/ipfs-util'
 import makeCancelable from 'makecancelable'
@@ -138,6 +139,7 @@ class App extends React.Component {
               selectedPage={page}
             />
           </TwoPanels>
+          <IpfsIsConnected />
         </AppView>
       </div>
     )

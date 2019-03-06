@@ -8,6 +8,8 @@ An Unstoppable Wiki for the Right to Access Knowledge.
 
 This Wiki dApp uses [Aragon](https://aragon.org) and [IPFS](https://ipfs.io) in order to enable a distributed editable and permissioned wiki. Wikis like that are imperative in a world where [Wikipedia is censored](https://blog.ipfs.io/24-uncensorable-wikipedia/) in some states.
 
+**Important:** You need to be running an IPFS node on your computer in order to see and edit wiki pages. [Install IPFS](https://dist.ipfs.io/#go-ipfs) and initialize its daemon with `ipfs daemon`. It is needed even when visiting DAOs from aragonpm.org.
+
 ## This is how it looks like
 
 ### Edition
