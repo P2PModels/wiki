@@ -1,35 +1,63 @@
-# Aragon React Kit Boilerplate
+# P2P Models Wiki dApp
 
-> 🕵️ [Find more boilerplates using GitHub](https://github.com/search?q=topic:aragon-boilerplate) |
-> ✨ [Official boilerplates](https://github.com/search?q=topic:aragon-boilerplate+org:aragon)
+An Unstoppable Wiki for the Right to Access Knowledge.
 
-React boilerplate for Aragon applications.
+> There is more than one way to burn a book. And the world is full of people running about with lit matches. – Ray Bradbury, Fahrenheit 451
 
-This boilerplate also includes a fully working example app, complete with a background worker and a front-end in React (with Aragon UI).
+> The Internet treats censorship as a malfunction and routes around it. – John Perry Barlow
+
+This Wiki dApp uses [Aragon](https://aragon.org) and [IPFS](https://ipfs.io) in order to enable a distributed editable and permissioned wiki. Wikis like that are imperative in a world where [Wikipedia is censored](https://blog.ipfs.io/24-uncensorable-wikipedia/) in some states.
+
+## This is how it looks like
+
+### Edition
+
+Pages can be edited using markdown:
+
+![Edit a page](https://p2pmodels.eu/wp-content/uploads/edit.gif)
+
+### Many Pages
+
+In the sidebar there are the wiki pages, and more can be created:
+
+![Create a page](https://p2pmodels.eu/wp-content/uploads/create.gif)
+
+### Page protection
+
+A page can be protected, so only people or apps with the right permissions can edit it:
+
+![Protect a page](https://p2pmodels.eu/wp-content/uploads/protect.gif)
 
 ## Usage
 
-Kit support requires using the Aragon CLI with a version greater than 4.1.0.
-```sh
-npm install -g @aragon/cli
-aragon init app react-kit
-```
-
-## Make the kit work with your app
-
-- In order for the kit to work properly, it needs to know what the name of your app is. Replace `app` in [this line](https://github.com/aragon/aragon-react-kit-boilerplate/blob/dd7d571da4ab1ee6a0a82130b0c2c5d6218771b6/contracts/Kit.sol#L58) with the name of your app in the `arapp.json` file (e.g. `myapp` for `myapp.aragonpm.eth`)
-
-- Edit the roles defined in the kit to configure your DAO as you want!
-
-## Run the kit
+You can start the wiki on a local Ethereum devchain as follows:
 
 ```sh
-aragon run --kit Kit --kit-init @ARAGON_ENS
+git clone https://github.com/p2pmodels/wiki
+cd wiki
+npm install
+npm start
 ```
 
-## Running your app
+## Installing the Wiki dApp on a Rinkeby DAO
 
-### Using HTTP
+This Wiki Aragon app is published in the AragonPM package manager on Rinkeby, so it can be
+installed to any Aragon DAO on that network. In order to deploy this app on an existing DAO,
+you can do the following:
+
+```sh
+$ npm install -g @aragon/cli --unsafe-perms=true
+$ dao install <dao-name>.aragonid.eth wiki.open.aragonpm.eth --environment aragon:rinkeby
+# -> Depending on your DAO permissions, a voting may have been issued. The voting must pass in order to continue.
+$ dao apps --all <dao-name>.aragonid.eth --environment aragon:rinkeby
+# -> You should see a list of apps, and the <wiki-addr> listed under permissionless apps.
+$ dao acl create <dao-name>.aragonid.eth <wiki-addr> EDIT_ROLE <your-addr> <your-addr> --environment aragon:rinkeby
+$ dao acl create <dao-name>.aragonid.eth <wiki-addr> CREATE_ROLE <your-addr> <your-addr> --environment aragon:rinkeby
+$ dao acl create <dao-name>.aragonid.eth <wiki-addr> PROTECT_ROLE <your-addr> <your-addr> --environment aragon:rinkeby
+# -> You may vote all this permission changes
+```
+
+### Using HTTP for development
 
 Running your app using HTTP will allow for a faster development process of your app's front-end, as it can be hot-reloaded without the need to execute `aragon run` every time a change is made.
 
@@ -38,12 +66,6 @@ Running your app using HTTP will allow for a faster development process of your 
 - After that, you can run `npm run start:aragon:http` or `npm run start:aragon:http:kit` which will compile your app's contracts, publish the app locally and create a DAO. You will need to stop it and run it again after making changes to your smart contracts.
 
 Changes to the app's background script (`app/script.js`) cannot be hot-reloaded, after making changes to the script, you will need to either restart the development server (`npm run start:app`) or rebuild the script `npm run build:script`.
-
-### Using IPFS
-
-Running your app using IPFS will mimic the production environment that will be used for running your app. `npm run start:aragon:ipfs` will run your app using IPFS. Whenever a change is made to any file in your front-end, a new version of the app needs to be published, so the command needs to be restarted.
-
-## What's in the box?
 
 ### npm Scripts
 
@@ -59,13 +81,9 @@ Running your app using IPFS will mimic the production environment that will be u
 - **test**: Runs tests for the contracts
 - **publish:minor**: Release a minor version to aragonPM
 - **publish:major**: Release a major version to aragonPM with a potentially new contract address for on-chain upgrades
-
-### Libraries
-
-- [**@aragon/os**](https://github.com/aragon/aragonos): Aragon interfaces
-- [**@aragon/client**](https://github.com/aragon/aragon.js/tree/master/packages/aragon-client): Wrapper for Aragon application RPC
-- [**@aragon/ui**](https://github.com/aragon/aragon-ui): Aragon UI components (in React)
+- **lint**: Shows the ES6 and Solidity style errors
+- **lint:fix**: Fixes the ES6 and Solidity style errors
 
 ## Licensing
 
-Note that the [Kit contract](contracts/Kit.sol) has a special requirement on licensing because it includes contract dependencies that are licensed as `GPL-3.0-or-later`. This is the only file in your project that is required to be licensed this way, and you are free to choose a different license for the rest of the project.
+The entire app is licensed as `AGPL-3.0-or-later`.
