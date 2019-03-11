@@ -15,7 +15,6 @@ app.store(
   (state, event) => {
     console.log(state, event)
     const { event: eventName } = event
-
     if (eventName === INITIALIZATION_TRIGGER || state === null) {
       state = initialState
     }
@@ -27,11 +26,12 @@ app.store(
         const { page, newValue } = event.returnValues
         const pageName = toUtf8(page)
         const hash = hexToIpfs(newValue)
+        const newPage = { ...state.pages[pageName], hash }
         return {
           ...state,
           pages: {
             ...state.pages,
-            [pageName]: { ...state.pages[pageName], hash },
+            [pageName]: newPage,
           },
         }
       }
