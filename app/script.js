@@ -22,6 +22,7 @@ app.store(
 
     console.log(eventName)
     switch (eventName) {
+      case 'Create': // will execute Edit because of the lack of break or return instructions
       case 'Edit': {
         const { page, newValue } = event.returnValues
         const pageName = toUtf8(page)
@@ -33,20 +34,6 @@ app.store(
             [pageName]: { ...state.pages[pageName], hash },
           },
         }
-      }
-      case 'Create': {
-        const { page, value } = event.returnValues
-        const pageName = toUtf8(page)
-        const hash = hexToIpfs(value)
-        const newState = {
-          ...state,
-          pages: {
-            ...state.pages,
-            [pageName]: { ...state.pages[pageName], hash },
-          },
-        }
-        console.log(newState)
-        return newState
       }
       case 'Remove': {
         const { page } = event.returnValues
