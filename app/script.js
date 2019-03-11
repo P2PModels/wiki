@@ -10,6 +10,7 @@ const app = new Aragon()
 
 const initialState = {
   pages: {},
+  history: {},
 }
 app.store(
   (state, event) => {
@@ -32,6 +33,10 @@ app.store(
           pages: {
             ...state.pages,
             [pageName]: newPage,
+          },
+          history: {
+            ...state.history,
+            [pageName]: [...state.history[pageName], hash],
           },
         }
       }
