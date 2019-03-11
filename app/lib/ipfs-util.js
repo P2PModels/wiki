@@ -1,3 +1,5 @@
+// Utilities to get stuff from IPFS and also to put it in.
+
 import { Buffer } from 'buffer'
 import Multihashes from 'multihashes'
 import ipfsAPI from 'ipfs-http-client'
