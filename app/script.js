@@ -36,7 +36,7 @@ app.store(
           },
           history: {
             ...state.history,
-            [pageName]: [...state.history[pageName], hash],
+            [pageName]: [...(state.history[pageName] || []), hash],
           },
         }
       }
