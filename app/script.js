@@ -24,9 +24,10 @@ app.store(
     switch (eventName) {
       case 'Create': // will execute Edit because of the lack of break or return instructions
       case 'Edit': {
-        const { page, newValue } = event.returnValues
+        // TODO (sem): Deprecate newValue in a future release, it is not used anymore in the contract
+        const { page, value, newValue } = event.returnValues
         const pageName = toUtf8(page)
-        const hash = hexToIpfs(newValue)
+        const hash = hexToIpfs(value || newValue)
         const newPage = { ...state.pages[pageName], hash }
         return {
           ...state,

@@ -6,7 +6,7 @@ import "@aragon/os/contracts/apps/AragonApp.sol";
 contract WikiApp is AragonApp {
 
     /// Events
-    event Edit(address indexed entity, bytes32 page, bytes newValue);
+    event Edit(address indexed entity, bytes32 page, bytes value);
     event Create(address indexed entity, bytes32 page, bytes value);
     event Remove(address indexed entity, bytes32 page);
     event ChangePermissions(address indexed entity, bytes32 page, bool isProtected);
