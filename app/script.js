@@ -25,6 +25,8 @@ app.store(
       case 'Create': // will execute Edit because of the lack of break or return instructions
       case 'Edit': {
         // TODO (sem): Deprecate newValue in a future release, it is not used anymore in the contract
+        // We keep it for backwards compatibility, as we might get an event from the
+        // old version of the contract, which would return {..., "newValue": <whatever>}
         const { page, value, newValue } = event.returnValues
         const pageName = toUtf8(page)
         const hash = hexToIpfs(value || newValue)
