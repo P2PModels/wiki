@@ -28,12 +28,12 @@ contract WikiApp is AragonApp {
     /**
      * @notice Edit the "`@fromHex(pageName)`" wiki page
      * @param pageName Name of the page to be edited
-     * @param newValue New hash of the page
+     * @param value New hash of the page
      */
-    function edit(bytes32 pageName, bytes newValue) external auth(EDIT_ROLE) {
+    function edit(bytes32 pageName, bytes value) external auth(EDIT_ROLE) {
         require(pages[pageName].flag != PROTECT_ROLE, "Page is protected");
-        pages[pageName].value = newValue;
-        emit Edit(msg.sender, pageName, newValue);
+        pages[pageName].value = value;
+        emit Edit(msg.sender, pageName, value);
     }
 
     /**
