@@ -19,7 +19,7 @@ const Kernel = artifacts.require('@aragon/core/contracts/kernel/Kernel')
 
 const getContract = name => artifacts.require(name)
 
-const ANY_ADDR = '0xffffffffffffffffffffffffffffffffffffffff'
+const ANY_ADDRESS = '0xffffffffffffffffffffffffffffffffffffffff'
 
 const checkEvent = (receipt, eventName, expectedArgs) => {
   const events = receipt.logs.filter(x => x.event === eventName)
@@ -31,8 +31,8 @@ contract('WikiApp', accounts => {
   let APP_MANAGER_ROLE, EDIT_ROLE, CREATE_ROLE, PROTECT_ROLE
   let daoFact, wikiBase, wiki
 
-  const root = accounts[0]
-  const holder = accounts[1]
+  const firstAccount = accounts[0]
+  const secondAccount = accounts[1]
 
   before(async () => {
     const kernelBase = await getContract('Kernel').new(true) // petrify immediately
@@ -53,36 +53,60 @@ contract('WikiApp', accounts => {
   })
 
   beforeEach(async () => {
-    const r = await daoFact.newDAO(root)
+    const daoReceipt = await daoFact.newDAO(firstAccount)
     const dao = Kernel.at(
-      r.logs.filter(l => l.event === 'DeployDAO')[0].args.dao
+      daoReceipt.logs.filter(l => l.event === 'DeployDAO')[0].args.dao
     )
     const acl = ACL.at(await dao.acl())
 
-    await acl.createPermission(root, dao.address, APP_MANAGER_ROLE, root, {
-      from: root,
-    })
+    await acl.createPermission(
+      firstAccount,
+      dao.address,
+      APP_MANAGER_ROLE,
+      firstAccount,
+      {
+        from: firstAccount,
+      }
+    )
 
     const receipt = await dao.newAppInstance(
       '0x1234',
       wikiBase.address,
       '0x',
       false,
-      { from: root }
+      { from: firstAccount }
     )
     wiki = WikiApp.at(
       receipt.logs.filter(l => l.event === 'NewAppProxy')[0].args.proxy
     )
 
-    await acl.createPermission(ANY_ADDR, wiki.address, EDIT_ROLE, root, {
-      from: root,
-    })
-    await acl.createPermission(ANY_ADDR, wiki.address, CREATE_ROLE, root, {
-      from: root,
-    })
-    await acl.createPermission(ANY_ADDR, wiki.address, PROTECT_ROLE, root, {
-      from: root,
-    })
+    await acl.createPermission(
+      ANY_ADDRESS,
+      wiki.address,
+      EDIT_ROLE,
+      firstAccount,
+      {
+        from: firstAccount,
+      }
+    )
+    await acl.createPermission(
+      ANY_ADDRESS,
+      wiki.address,
+      CREATE_ROLE,
+      firstAccount,
+      {
+        from: firstAccount,
+      }
+    )
+    await acl.createPermission(
+      ANY_ADDRESS,
+      wiki.address,
+      PROTECT_ROLE,
+      firstAccount,
+      {
+        from: firstAccount,
+      }
+    )
   })
 
   it('should store a value', async () => {
@@ -92,9 +116,9 @@ contract('WikiApp', accounts => {
     const receipt = await wiki.edit(main, value)
     assert.equal((await wiki.pages(main))[0], value)
     checkEvent(receipt, 'Edit', {
-      entity: root,
+      entity: firstAccount,
       page: main + '0'.repeat(56),
-      newValue: value,
+      value: value,
     })
   })
 
@@ -105,7 +129,7 @@ contract('WikiApp', accounts => {
     const receipt = await wiki.create(test, value)
     assert.equal((await wiki.pages(test))[0], value)
     checkEvent(receipt, 'Create', {
-      entity: root,
+      entity: firstAccount,
       page: test + '0'.repeat(56),
       value: value,
     })
@@ -113,7 +137,7 @@ contract('WikiApp', accounts => {
     const receipt2 = await wiki.remove(test)
     assert.equal((await wiki.pages(test))[0], '0x')
     checkEvent(receipt2, 'Remove', {
-      entity: root,
+      entity: firstAccount,
       page: test + '0'.repeat(56),
     })
     // assert.equal(web3.toUtf8(await wiki.pageNames(0)), '')
@@ -141,12 +165,12 @@ contract('WikiApp', accounts => {
       await wiki.PROTECT_ROLE()
     )
     checkEvent(receipt, 'ChangePermissions', {
-      entity: root,
+      entity: firstAccount,
       page: protectedPage + '0'.repeat(46),
       isProtected: true,
     })
     await assertRevert(async () =>
-      wiki.edit(protectedPage, '0x04', { from: holder })
+      wiki.edit(protectedPage, '0x04', { from: secondAccount })
     )
     // TODO
     // await assertRevert(async () =>
@@ -155,11 +179,11 @@ contract('WikiApp', accounts => {
     assert.equal((await wiki.pages(protectedPage))[0], '0x03')
     const receipt2 = await wiki.unprotect(protectedPage)
     checkEvent(receipt2, 'ChangePermissions', {
-      entity: root,
+      entity: firstAccount,
       page: protectedPage + '0'.repeat(46),
       isProtected: false,
     })
-    await wiki.edit(protectedPage, '0x04', { from: holder })
+    await wiki.edit(protectedPage, '0x04', { from: secondAccount })
     assert.equal((await wiki.pages(protectedPage))[0], '0x04')
   })
 
@@ -169,12 +193,12 @@ contract('WikiApp', accounts => {
     const value = '0x05'
     await wiki.create(protectedPage, value)
     const receipt = await wiki.editProtected(protectedPage, value, {
-      from: root,
+      from: firstAccount,
     })
     checkEvent(receipt, 'Edit', {
-      entity: root,
+      entity: firstAccount,
       page: protectedPage + '0'.repeat(46),
-      newValue: value,
+      value: value,
     })
   })
 
@@ -184,6 +208,8 @@ contract('WikiApp', accounts => {
     const value = '0x06'
     await wiki.create(protectedPage, value)
     await wiki.protect(protectedPage)
-    await assertRevert(async () => wiki.remove(protectedPage, { from: root }))
+    await assertRevert(async () =>
+      wiki.remove(protectedPage, { from: firstAccount })
+    )
   })
 })

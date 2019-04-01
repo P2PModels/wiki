@@ -41,17 +41,11 @@ const providerForNetwork = network => () => {
 
   return new HDWalletProviderPrivkey(keys, rpc)
 }
-
 module.exports = {
   networks: {
     development: {
       host: 'localhost',
       port: 8545,
-      network_id: '*',
-    },
-    coverage: {
-      host: 'localhost',
-      port: 8555,
       network_id: '*',
     },
     mainnet: {
@@ -61,6 +55,13 @@ module.exports = {
     rinkeby: {
       network_id: 4,
       provider: providerForNetwork('rinkeby'),
+    },
+    coverage: {
+      host: 'localhost',
+      network_id: '*',
+      port: 8555,
+      gas: 0xffffffffff,
+      gasPrice: 0x01,
     },
   },
 }

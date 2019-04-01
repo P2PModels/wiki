@@ -65,26 +65,28 @@ Running your app using HTTP will allow for a faster development process of your 
 
 - First start your app's development server running `npm run start:app`, and keep that process running. By default it will rebuild the app and reload the server when changes to the source are made.
 
-- After that, you can run `npm run start:aragon:http` or `npm run start:aragon:http:kit` which will compile your app's contracts, publish the app locally and create a DAO. You will need to stop it and run it again after making changes to your smart contracts.
+- After that, you can run `npm run start:http` or `npm run start:http:template` which will compile your app's contracts, publish the app locally and create a DAO. You will need to stop it and run it again after making changes to your smart contracts.
 
-Changes to the app's background script (`app/script.js`) cannot be hot-reloaded, after making changes to the script, you will need to either restart the development server (`npm run start:app`) or rebuild the script `npm run build:script`.
+Changes to the app's background script (`app/src/script.js`) cannot be hot-reloaded, after making changes to the script, you will need to either restart the development server (`npm run start:app`) or rebuild the script with `cd app; npm run build:script`.
 
 ### npm Scripts
 
-- **start** or **start:aragon:ipfs**: Runs your app inside a DAO served from IPFS
-- **start:aragon:http**: Runs your app inside a DAO served with HTTP (hot reloading)
-- **start:aragon:ipfs:kit**: Creates a DAO with the Kit and serves the app from IPFS
-- **start:aragon:http:kit**: Creates a DAO with the Kit and serves the app with HTTP (hot reloading)
+- **start** or **start:ipfs**: Runs your app inside a DAO served from IPFS
+- **start:http**: Runs your app inside a DAO served with HTTP (hot reloading)
+- **start:ipfs:template**: Creates a DAO with the [Template](https://github.com/p2pmodels/wiki/blob/master/contracts/Template.sol) and serves the app from IPFS
+- **start:http:template**: Creates a DAO with the [Template](https://github.com/p2pmodels/wiki/blob/master/contracts/Template.sol) and serves the app with HTTP (hot reloading)
+- **prepare**: Installs dependencies of the front-end
 - **start:app**: Starts a development server for your app
-- **compile**: Compile the smart contracts
+- **compile**: Compiles the smart contracts
 - **build**: Builds the front-end and background script
-- **build:app**: Builds the front-end
-- **build:script**: Builds the background script
 - **test**: Runs tests for the contracts
-- **publish:minor**: Release a minor version to aragonPM
-- **publish:major**: Release a major version to aragonPM with a potentially new contract address for on-chain upgrades
-- **lint**: Shows the ES6 and Solidity style errors
-- **lint:fix**: Fixes the ES6 and Solidity style errors
+- **publish:patch**: Releases a patch version to aragonPM (only frontend/content changes allowed)
+- **publish:minor**: Releases a minor version to aragonPM (only frontend/content changes allowed)
+- **publish:major**: Releases a major version to aragonPM (frontend **and** contract changes)
+- **versions**: Checks the currently installed versions of the app
+- **lint**: Checks the app and the contracts for linting errors
+- **lint:fix**: Fixes the lint errors that can be resolved automatically
+- **coverage**: Runs the tests for the contracts and creates a report
 
 ## Licensing
 

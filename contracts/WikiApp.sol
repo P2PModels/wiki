@@ -25,6 +25,10 @@ contract WikiApp is AragonApp {
     bytes32 constant public CREATE_ROLE = keccak256("CREATE_ROLE");
     bytes32 constant public PROTECT_ROLE = keccak256("PROTECT_ROLE");
 
+    function initialize() public onlyInit {
+        initialized();
+    }
+
     /**
      * @notice Edit the "`@fromHex(pageName)`" wiki page
      * @param pageName Name of the page to be edited
@@ -82,9 +86,5 @@ contract WikiApp is AragonApp {
     function unprotect(bytes32 pageName) external auth(PROTECT_ROLE) {
         pages[pageName].flag = EDIT_ROLE;
         emit ChangePermissions(msg.sender, pageName, false);
-    }
-
-    function initialize() public onlyInit {
-        initialized();
     }
 }

@@ -4,7 +4,12 @@ import { Button, Text, IconAdd, theme } from '@aragon/ui'
 import { IconWrapper } from './ui-components'
 import styled from 'styled-components'
 
-const History = ({ pages, selectedRevision = 'last', viewDiff, showRevision }) => (
+const History = ({
+  pages,
+  selectedRevision = 'last',
+  viewDiff,
+  showRevision,
+}) => (
   <Main>
     <div>
       <h1>
