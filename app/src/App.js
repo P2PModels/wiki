@@ -9,14 +9,14 @@ import { utf8ToHex } from 'web3-utils'
 import { get, save } from './lib/ipfs-util'
 import makeCancelable from 'makecancelable'
 import { useAragonApi } from '@aragon/api-react'
-import styled from 'styled-components'
 
 function App() {
   const { api, appState } = useAragonApi()
-  const { pages, syncing } = appState
+  const { pages } = appState
   const [mode, setMode] = useState('view')
   const [currentPage, setPage] = useState('Welcome')
   const [text, setText] = useState('')
+  const [syncing, setSyncing] = useState(true)
   const { hash, isProtected } = pages[currentPage]
     ? pages[currentPage]
     : { hash: null, isProtected: false }
@@ -74,18 +74,27 @@ function App() {
     }
   }
 
-  useEffect((prevProps, prevState) => {
+  useEffect(() => {
     if (hash)
       return makeCancelable(get(hash), text => {
         console.log(text)
         setText(text)
       })
-  })
+  }, [hash])
+
+  // TODO Something better than a timeout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSyncing(false)
+    }, 400)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [hash])
 
   return (
     <div>
       <BaseStyles />
-      {syncing && <Syncing />}
       <AppView title="DAO Wiki">
         <TwoPanels>
           <Main>
@@ -96,6 +105,7 @@ function App() {
                 handleRemove={() => handleRemove(currentPage)}
                 page={currentPage}
                 hash={hash}
+                syncing={syncing}
                 text={text}
                 isProtected={isProtected}
               />
@@ -120,11 +130,5 @@ function App() {
     </div>
   )
 }
-
-const Syncing = styled.div.attrs({ children: 'Syncing…' })`
-  position: absolute;
-  top: 15px;
-  right: 20px;
-`
 
 export default App

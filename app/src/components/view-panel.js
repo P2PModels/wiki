@@ -24,6 +24,7 @@ import { markdown } from 'markdown'
 export const ViewPanel = ({
   page,
   hash,
+  syncing,
   isProtected = false,
   text = '',
   handleEdit,
@@ -66,7 +67,9 @@ export const ViewPanel = ({
           </div>
         </PageActions>
       )}
-      {hash ? (
+      {syncing ? (
+        <Title>Loading…</Title>
+      ) : hash || syncing ? (
         <div>
           <Title>{page}</Title>
           <ResetStyle
