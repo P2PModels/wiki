@@ -13,13 +13,13 @@ import { useAragonApi } from '@aragon/api-react'
 function App() {
   const { api, appState } = useAragonApi()
   const { pages } = appState
+
   const [mode, setMode] = useState('view')
   const [currentPage, setPage] = useState('Welcome')
   const [text, setText] = useState('')
   const [syncing, setSyncing] = useState(true)
-  const { hash, isProtected } = pages[currentPage]
-    ? pages[currentPage]
-    : { hash: null, isProtected: false }
+
+  const { hash, isProtected } = pages[currentPage] || { hash: null, isProtected: false }
 
   const handlePageChange = page => {
     setPage(page)
@@ -75,18 +75,18 @@ function App() {
   }
 
   useEffect(() => {
-    if (hash)
+    if (hash && !syncing)
       return makeCancelable(get(hash), text => {
         console.log(text)
         setText(text)
       })
-  }, [hash])
+  }, [hash, syncing])
 
   // TODO Something better than a timeout
   useEffect(() => {
     const timer = setTimeout(() => {
       setSyncing(false)
-    }, 400)
+    }, 800)
     return () => {
       clearTimeout(timer)
     }

@@ -29,23 +29,23 @@
     "solidity-coverage": "^0.5.11"
   },
   "scripts": {
-    "start": "npm run start:ipfs",
+    "start": "yarn run start:ipfs",
     "start:ipfs": "aragon run",
     "start:http": "aragon run --http localhost:8001 --http-served-from ./dist",
-    "start:ipfs:template": "npm run start:ipfs -- --template Template --template-init @ARAGON_ENS",
-    "start:http:template": "npm run start:http -- --template Template --template-init @ARAGON_ENS",
-    "prepare": "cd app && npm install && cd ..",
-    "start:app": "cd app && npm start && cd ..",
-    "test": "cross-env TRUFFLE_TEST=true npm run ganache-cli:test",
+    "start:ipfs:template": "yarn run start:ipfs -- --template Template --template-init @ARAGON_ENS",
+    "start:http:template": "yarn run start:http -- --template Template --template-init @ARAGON_ENS",
+    "prepare": "cd app && yarn install && cd ..",
+    "start:app": "cd app && yarn start && cd ..",
+    "test": "cross-env TRUFFLE_TEST=true yarn run ganache-cli:test",
     "compile": "aragon contracts compile",
-    "build": "cd app && npm run build && cd ..",
+    "build": "cd app && yarn run build && cd ..",
     "publish:patch": "aragon apm publish patch",
     "publish:minor": "aragon apm publish minor",
     "publish:major": "aragon apm publish major",
     "versions": "aragon apm versions",
     "lint": "eslint . & solium --dir ./contracts",
     "lint:fix": "eslint . --fix & solium --dir ./contracts --fix",
-    "coverage": "cross-env SOLIDITY_COVERAGE=true npm run ganache-cli:test",
+    "coverage": "cross-env SOLIDITY_COVERAGE=true yarn run ganache-cli:test",
     "ganache-cli:test": "sh ./node_modules/@aragon/test-helpers/ganache-cli.sh"
   }
 }
