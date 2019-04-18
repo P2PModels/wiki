@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "description": "A decentralized wiki for Aragon",
   "dependencies": {
-    "@aragon/os": "^4.0.1",
     "@aragon/apps-shared-minime": "^1.0.0",
     "@aragon/apps-token-manager": "2.0.0",
-    "@aragon/apps-voting": "2.0.0"
+    "@aragon/apps-voting": "2.0.0",
+    "@aragon/os": "^4.0.1"
   },
   "devDependencies": {
     "@aragon/cli": "^5.4.0",
@@ -26,7 +26,8 @@
     "ethlint": "^1.2.3",
     "parcel-bundler": "^1.12.0",
     "prettier": "^1.16.4",
-    "solidity-coverage": "^0.5.11"
+    "solidity-coverage": "^0.5.11",
+    "yarn": "^1.15.2"
   },
   "scripts": {
     "start": "yarn run start:ipfs",
