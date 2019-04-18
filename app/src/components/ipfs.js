@@ -15,7 +15,7 @@ class IpfsIsConnected extends React.Component {
           .peers()
           .then(peers => {
             console.log(peers.length + ' IPFS peers')
-            this.setState({ connected: peers.length > 0 })
+            this.setState({ connected: true, peers: peers.length })
           })
           .catch(e => this.setState({ connected: false }))
       } catch (e) {
@@ -32,11 +32,17 @@ class IpfsIsConnected extends React.Component {
   render() {
     return !this.state.connected ? (
       <div style={{ color: 'red' }}>
-        ⚠ IPFS daemon not available in your computer. Please{' '}
+        ⚠ Warning: IPFS daemon is not running or is not available in your
+        computer. Please{' '}
         <SafeLink href="https://dist.ipfs.io/#go-ipfs" target="_blank">
           <strong>install it</strong>
         </SafeLink>{' '}
         and run <strong>ipfs daemon</strong> on your console.
+      </div>
+    ) : this.state.peers === 0 ? (
+      <div style={{ color: 'red' }}>
+        ⚠ Warning: IPFS is not connected to any peer. The content of your edits
+        is not going to be propagated. Please, check your internet connection.
       </div>
     ) : null
   }

@@ -19,7 +19,10 @@ function App() {
   const [text, setText] = useState('')
   const [syncing, setSyncing] = useState(true)
 
-  const { hash, isProtected } = pages[currentPage] || { hash: null, isProtected: false }
+  const { hash, isProtected } = pages[currentPage] || {
+    hash: null,
+    isProtected: false,
+  }
 
   const handlePageChange = page => {
     setPage(page)
