@@ -1,0 +1,18 @@
+{
+    "Cancel": "Cancelar",
+    "Create Page": "Crear página",
+    "Edit": "Editar",
+    "History": "Historial",
+    "Loading…": "Cargando…",
+    "Outline": "Índice",
+    "Protect": "Proteger",
+    "Remove Page": "Eliminar página",
+    "Save": "Guardar",
+    "Show differences": "Ver diferencias",
+    "Unprotect": "Desproteger",
+    "View on IPFS": "Ver en IPFS",
+    "Welcome": "¡Hola!",
+    "default-wiki-text": "Esta es una wiki resistente a la censura, que guarda su contenido en IPFS y su estado en la blockchain. Si eres posees tokens, puedes editarla.",
+    "ipfs-not-connected": "⚠ Aviso: IPFS no está conectado a ningún igual. El contenido de tus ediciones no va a ser propagado. Por favor, comprueba tu conexión a internet.",
+    "ipfs-not-running": "⚠ Aviso: El demonio de IPFS no está siendo ejecutado o no está disponible en su ordenador. Por favor, <2><0>instálelo</0></2> y ejecute <5>ipfs daemon</5> en su consola."
+}
