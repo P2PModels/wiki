@@ -1,0 +1,18 @@
+{
+  "Cancel": "Cancel",
+  "Create Page": "Create Page",
+  "Edit": "Edit",
+  "History": "History",
+  "Loading…": "Loading…",
+  "Outline": "Outline",
+  "Protect": "Protect",
+  "Remove Page": "Remove Page",
+  "Save": "Save",
+  "Show differences": "Show differences",
+  "Unprotect": "Unprotect",
+  "View on IPFS": "View on IPFS",
+  "Welcome": "Welcome",
+  "default-wiki-text": "This is a censorship resistant wiki, that stores the content on IPFS its state on the blockchain. If you are a token holder, you can edit it.",
+  "ipfs-not-connected": "⚠ Warning: IPFS is not connected to any peer. The content of your edits is not going to be propagated. Please, check your internet connection.",
+  "ipfs-not-running": "⚠ Warning: IPFS daemon is not running or is not available in your computer. Please <2><0>install it</0></2> and run <5>ipfs daemon</5> on your console."
+}

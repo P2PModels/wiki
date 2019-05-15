@@ -3,6 +3,7 @@ import React from 'react'
 import { Button, Card, TextInput } from '@aragon/ui'
 import { Textarea } from './ui-components'
 import styled from 'styled-components'
+import { withTranslation } from 'react-i18next'
 
 class EditPanel extends React.Component {
   constructor(props) {
@@ -24,7 +25,7 @@ class EditPanel extends React.Component {
 
   render() {
     const { text, page } = this.state
-    const { handleSubmit, mode } = this.props
+    const { handleSubmit, mode, t } = this.props
     return (
       <Main>
         <Card className="padded" width="100%" height="100%">
@@ -44,14 +45,14 @@ class EditPanel extends React.Component {
             />
             <Buttons>
               <Button mode="strong" onClick={e => handleSubmit(page, text)}>
-                Save
+                {t('Save')}
               </Button>
               <Button
                 type="button"
                 mode="outline"
                 onClick={e => handleSubmit(false)}
               >
-                Cancel
+                {t('Cancel')}
               </Button>
             </Buttons>
           </form>
@@ -90,4 +91,4 @@ const Buttons = styled.div`
   }
 `
 
-export default EditPanel
+export default withTranslation()(EditPanel)

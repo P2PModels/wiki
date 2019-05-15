@@ -3,20 +3,21 @@ import React from 'react'
 import { Button, Text, IconAdd, theme } from '@aragon/ui'
 import { IconWrapper } from './ui-components'
 import styled from 'styled-components'
+import { withTranslation } from 'react-i18next'
 
-const PageList = ({ pages, selectedPage = 'Welcome', create, change }) => (
+const PageList = ({ pages, selectedPage = 'Welcome', create, change, t }) => (
   <Main>
     {Object.keys(pages).length > 0 ? (
       <div>
         <h1>
           <Text color={theme.textSecondary} smallcaps>
-            Outline
+            {t('Outline')}
           </Text>
           <Button onClick={create} mode="text">
             <IconWrapper className="accent">
               <IconAdd />
             </IconWrapper>
-            <span className="action-label accent">Create page</span>
+            <span className="action-label accent">{t('Create page')}</span>
           </Button>
         </h1>
         <ul>
@@ -74,4 +75,4 @@ const Main = styled.aside`
   }
 `
 
-export default PageList
+export default withTranslation()(PageList)

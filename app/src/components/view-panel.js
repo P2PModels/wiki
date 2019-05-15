@@ -19,9 +19,10 @@ import {
 } from './ui-components'
 import styled from 'styled-components'
 import { markdown } from 'markdown'
+import { withTranslation, Trans } from 'react-i18next'
 
 // Alternative: <iframe src="https://ipfs.io/ipfs/QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh/mdown#sample.md" />
-export const ViewPanel = ({
+const ViewPanel = ({
   page,
   hash,
   syncing,
@@ -31,6 +32,7 @@ export const ViewPanel = ({
   handleCreate,
   handleProtect,
   handleRemove,
+  t,
 }) => (
   <Main>
     <Card width="100%" className="padded">
@@ -38,7 +40,7 @@ export const ViewPanel = ({
         <PageActions>
           <Button onClick={handleEdit} mode="text" className="accent">
             <IconEdit />
-            <span className="label">Edit</span>
+            <span className="label">{t('Edit')}</span>
           </Button>
           <ProtectButton
             page={page}
@@ -53,7 +55,7 @@ export const ViewPanel = ({
                 </IconWrapper>
                 <ActionLabel>
                   <SafeLink href={getIpfs(hash)} target="_blank">
-                    View on IPFS
+                    {t('View on IPFS')}
                   </SafeLink>
                 </ActionLabel>
               </ContextMenuItem>
@@ -61,14 +63,14 @@ export const ViewPanel = ({
                 <IconWrapper>
                   <IconRemove />
                 </IconWrapper>
-                <ActionLabel>Remove Page</ActionLabel>
+                <ActionLabel>{t('Remove Page')}</ActionLabel>
               </ContextMenuItem>
             </ContextMenu>
           </div>
         </PageActions>
       )}
       {syncing ? (
-        <Title>Loading…</Title>
+        <Title>{t('Loading…')}</Title>
       ) : hash || syncing ? (
         <div>
           <Title>{page}</Title>
@@ -78,15 +80,17 @@ export const ViewPanel = ({
         </div>
       ) : (
         <div>
-          <Title>Welcome</Title>
+          <Title>{t('Welcome')}</Title>
           <ResetStyle>
-            This is a censorship resistant wiki, that stores the content on IPFS
-            its state on the blockchain. If you are a token holder, you can edit
-            it.
+            <Trans i18nKey="default-wiki-text">
+              This is a censorship resistant wiki, that stores the content on
+              IPFS its state on the blockchain. If you are a token holder, you
+              can edit it.
+            </Trans>
           </ResetStyle>
           <div className="padded-vertically">
             <Button mode="strong" onClick={handleEdit}>
-              Create Page
+              {t('Create Page')}
             </Button>
           </div>
         </div>
@@ -124,26 +128,28 @@ const Main = styled.div`
   }
 `
 
-const ProtectButton = ({ page, isProtected = false, handleProtect }) =>
-  isProtected ? (
-    <Button
-      onClick={e => handleProtect(page, !isProtected)}
-      mode="text"
-      className="protected"
-      title="Unprotect"
-    >
-      <IconProtect />
-    </Button>
-  ) : (
-    <Button
-      onClick={e => handleProtect(page, !isProtected)}
-      mode="text"
-      className="unprotected"
-      title="Protect"
-    >
-      <IconProtect />
-    </Button>
-  )
+const ProtectButton = withTranslation()(
+  ({ page, isProtected = false, handleProtect, t }) =>
+    isProtected ? (
+      <Button
+        onClick={e => handleProtect(page, !isProtected)}
+        mode="text"
+        className="protected"
+        title={t('Unprotect')}
+      >
+        <IconProtect />
+      </Button>
+    ) : (
+      <Button
+        onClick={e => handleProtect(page, !isProtected)}
+        mode="text"
+        className="unprotected"
+        title={t('Protect')}
+      >
+        <IconProtect />
+      </Button>
+    )
+)
 
 const PageActions = styled.div`
   float: right;
@@ -162,3 +168,4 @@ const PageActions = styled.div`
     }
   }
 `
+export default withTranslation()(ViewPanel)

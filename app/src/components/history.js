@@ -3,24 +3,26 @@ import React from 'react'
 import { Button, Text, IconAdd, theme } from '@aragon/ui'
 import { IconWrapper } from './ui-components'
 import styled from 'styled-components'
+import { withTranslation } from 'react-i18next'
 
 const History = ({
   pages,
   selectedRevision = 'last',
   viewDiff,
   showRevision,
+  t,
 }) => (
   <Main>
     <div>
       <h1>
         <Text color={theme.textSecondary} smallcaps>
-          History
+          {t('History')}
         </Text>
         <Button onClick={viewDiff} mode="text">
           <IconWrapper className="accent">
             <IconAdd />
           </IconWrapper>
-          <span className="action-label accent">Show differences</span>
+          <span className="action-label accent">{t('Show differences')}</span>
         </Button>
       </h1>
       <ul>
@@ -77,4 +79,4 @@ const Main = styled.aside`
   }
 `
 
-export default History
+export default withTranslation()(History)
