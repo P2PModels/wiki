@@ -68,10 +68,7 @@ contract Template is TemplateBase {
 
         address root = msg.sender;
 
-        // PLACE WHERE YOU SHOULD CHANGE YOUR APP NAME
-        // ---
         bytes32 appId = apmNamehash("wiki");
-        // ---
 
         bytes32 votingAppId = apmNamehash("voting");
         bytes32 tokenManagerAppId = apmNamehash("token-manager");
