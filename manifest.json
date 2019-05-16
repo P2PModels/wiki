@@ -4,6 +4,7 @@
   "description": "A decentralized wiki for Aragon",
   "changelog_url": "https://github.com/p2pmodels/wiki/releases",
   "details_url": "/dist/meta/details.md",
+  "source_url": "https://github.com/p2pmodels/wiki/",
   "icons": [{
     "src": "/dist/meta/icon.svg",
     "sizes": "22x22"

@@ -1,65 +1,46 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Button, Card, TextInput } from '@aragon/ui'
 import { Textarea } from './ui-components'
 import styled from 'styled-components'
 import { withTranslation } from 'react-i18next'
 
-class EditPanel extends React.Component {
-  constructor(props) {
-    super(props)
-    if (props.mode === 'create') {
-      this.state = { ...props, page: '', text: '' }
-    } else {
-      this.state = { ...props }
-    }
-  }
-
-  componentWillReceiveProps(newProps) {
-    const state =
-      newProps.mode === 'create'
-        ? { ...newProps, page: '', text: '' }
-        : { ...newProps }
-    this.setState(state)
-  }
-
-  render() {
-    const { text, page } = this.state
-    const { handleSubmit, mode, t } = this.props
-    return (
-      <Main>
-        <Card className="padded" width="100%" height="100%">
-          <form onSubmit={e => e.preventDefault()}>
-            <TextInput
-              value={page}
-              onChange={e => this.setState({ page: e.target.value })}
-              disabled={mode === 'edit'}
-              placeholder={mode === 'create' ? 'New Page' : ''}
-              autoFocus={mode === 'create'}
-              wide
-            />
-            <Textarea
-              value={text}
-              onChange={e => this.setState({ text: e.target.value })}
-              autoFocus={mode === 'edit'}
-            />
-            <Buttons>
-              <Button mode="strong" onClick={e => handleSubmit(page, text)}>
-                {t('Save')}
-              </Button>
-              <Button
-                type="button"
-                mode="outline"
-                onClick={e => handleSubmit(false)}
-              >
-                {t('Cancel')}
-              </Button>
-            </Buttons>
-          </form>
-        </Card>
-      </Main>
-    )
-  }
+function EditPanel({ mode, handleSubmit, t, text: _text, page: _page }) {
+  const [text, setText] = useState(mode === 'create' ? '' : _text)
+  const [page, setPage] = useState(mode === 'create' ? '' : _page)
+  return (
+    <Main>
+      <Card className="padded" width="100%" height="100%">
+        <form onSubmit={e => e.preventDefault()}>
+          <TextInput
+            value={page}
+            onChange={e => setPage(e.target.value)}
+            disabled={mode === 'edit'}
+            placeholder={mode === 'create' ? t('New Page') : ''}
+            autoFocus={mode === 'create'}
+            wide
+          />
+          <Textarea
+            value={text}
+            onChange={e => setText(e.target.value)}
+            autoFocus={mode === 'edit'}
+          />
+          <Buttons>
+            <Button mode="strong" onClick={e => handleSubmit(page, text)}>
+              {t('Save')}
+            </Button>
+            <Button
+              type="button"
+              mode="outline"
+              onClick={e => handleSubmit(false)}
+            >
+              {t('Cancel')}
+            </Button>
+          </Buttons>
+        </form>
+      </Card>
+    </Main>
+  )
 }
 
 const Main = styled.div`
