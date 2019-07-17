@@ -8,6 +8,7 @@
     "@aragon/api": "^1.1.0",
     "@aragon/api-react": "^1.0.0-beta.1",
     "@aragon/ui": "^0.40.1",
+    "copyfiles": "^2.1.1",
     "core-js": "^3.1.4",
     "i18next": "^17.0.6",
     "i18next-fetch-backend": "^2.2.0",
@@ -35,6 +36,6 @@
     "watch:script": "parcel watch src/script.js --out-dir ../dist/ --no-hmr",
     "devserver": "parcel serve index.html -p 8001 --out-dir ../dist/ --no-cache",
     "start": "npm run sync-assets && npm run build:script -- --no-minify && npm run devserver",
-    "sync-assets": "copy-aragon-ui-assets ../dist && rsync -rtu ./public/ ../dist"
+    "sync-assets": "copy-aragon-ui-assets ../dist && copyfiles './public/**/+' ../dist"
   }
 }

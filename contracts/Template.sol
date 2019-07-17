@@ -68,7 +68,7 @@ contract Template is TemplateBase {
 
         address root = msg.sender;
 
-        bytes32 appId = apmNamehash("wiki");
+        bytes32 appId = keccak256(abi.encodePacked(apmNamehash("open"), keccak256("wiki")));
 
         bytes32 votingAppId = apmNamehash("voting");
         bytes32 tokenManagerAppId = apmNamehash("token-manager");

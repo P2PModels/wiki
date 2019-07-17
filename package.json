@@ -30,6 +30,7 @@
     "yarn": "^1.17.3"
   },
   "scripts": {
+    "prepublishOnly": "aragon contracts compile",
     "start": "yarn run start:ipfs",
     "start:ipfs": "aragon run",
     "start:http": "aragon run --http localhost:8001 --http-served-from ./dist",
