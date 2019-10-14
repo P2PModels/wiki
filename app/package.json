@@ -5,30 +5,29 @@
   "main": "src/index.js",
   "license": "MIT",
   "dependencies": {
-    "@aragon/api": "^1.1.0",
-    "@aragon/api-react": "^1.0.0-beta.1",
-    "@aragon/ui": "^0.40.1",
-    "copyfiles": "^2.1.1",
+    "@aragon/api": "^2.0.0-beta.7",
+    "@aragon/api-react": "^2.0.0-beta.6",
+    "@aragon/ui": "^1.0.0-alpha.30",
     "core-js": "^3.1.4",
     "i18next": "^17.0.6",
     "i18next-fetch-backend": "^2.2.0",
     "ipfs-http-client": "^31.0.0",
     "makecancelable": "^1.1.1",
-    "parcel-bundler": "^1.12.3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-i18next": "^10.11.4",
     "regenerator-runtime": "^0.13.2",
     "remark": "^10.0.1",
     "remark-react": "^5.0.1",
-    "rxjs": "^6.5.2",
     "styled-components": "^4.3.2",
     "web3-utils": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",
     "@babel/plugin-proposal-class-properties": "^7.5.0",
-    "@babel/preset-env": "^7.5.4"
+    "@babel/preset-env": "^7.5.4",
+    "copyfiles": "^2.1.1",
+    "parcel-bundler": "^1.12.3"
   },
   "scripts": {
     "build": "npm run sync-assets && npm run build:app && npm run build:script",
@@ -37,6 +36,6 @@
     "watch:script": "parcel watch src/script.js --out-dir ../dist/ --no-hmr",
     "devserver": "parcel serve index.html -p 8001 --out-dir ../dist/ --no-cache",
     "start": "npm run sync-assets && npm run build:script -- --no-minify && npm run devserver",
-    "sync-assets": "copy-aragon-ui-assets ../dist && copyfiles './public/**/+' ../dist"
+    "sync-assets": "copy-aragon-ui-assets ../dist && copyfiles './public/**/*' ../dist"
   }
 }

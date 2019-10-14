@@ -71,9 +71,9 @@ function App() {
   const handleProtect = (page, protect) => {
     const pageHex = utf8ToHex(page)
     if (protect) {
-      api.protect(pageHex)
+      api.protect(pageHex).toPromise()
     } else {
-      api.unprotect(pageHex)
+      api.unprotect(pageHex).toPromise()
     }
   }
 

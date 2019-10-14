@@ -9,8 +9,7 @@
     "@aragon/os": "^4.2.1"
   },
   "devDependencies": {
-    "@aragon/cli": "^5.9.7",
-    "@aragon/wrapper": "5.0.0-rc.5",
+    "@aragon/cli": "^6.0.0",
     "@aragon/test-helpers": "^2.0.0",
     "babel-eslint": "^10.0.2",
     "cross-env": "^5.2.0",
@@ -25,14 +24,15 @@
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-standard": "^4.0.0",
     "ethlint": "^1.2.4",
+    "ganache-cli": "^6.0.0",
     "prettier": "^1.18.2",
     "solidity-coverage": "^0.6.2",
+    "truffle": "4.1.14",
     "yarn": "^1.17.3"
   },
   "scripts": {
-    "prepublishOnly": "aragon contracts compile",
     "start": "yarn run start:ipfs",
-    "start:ipfs": "aragon run",
+    "start:ipfs": "aragon run --files dist",
     "start:http": "aragon run --http localhost:8001 --http-served-from ./dist",
     "start:ipfs:template": "yarn run start:ipfs -- --template Template --template-init @ARAGON_ENS",
     "start:http:template": "yarn run start:http -- --template Template --template-init @ARAGON_ENS",
