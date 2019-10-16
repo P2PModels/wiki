@@ -4,6 +4,7 @@ import { Button, Card, TextInput } from '@aragon/ui'
 import { Textarea } from './ui-components'
 import styled from 'styled-components'
 import { withTranslation } from 'react-i18next'
+import IpfsIsConnected from './ipfs'
 
 function EditPanel({ mode, handleSubmit, t, text: _text, page: _page }) {
   const [text, setText] = useState(mode === 'create' ? '' : _text)
@@ -25,6 +26,7 @@ function EditPanel({ mode, handleSubmit, t, text: _text, page: _page }) {
             onChange={e => setText(e.target.value)}
             autoFocus={mode === 'edit'}
           />
+          <IpfsIsConnected />
           <Buttons>
             <Button mode="strong" onClick={e => handleSubmit(page, text)}>
               {t('Save')}
@@ -53,6 +55,7 @@ const Main = styled.div`
   }
   form {
     height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     input[type='text'] {
@@ -60,7 +63,7 @@ const Main = styled.div`
       margin-bottom: 5px;
     }
     textarea {
-      flex-grow: 1;
+      height: 60vh;
     }
   }
 `

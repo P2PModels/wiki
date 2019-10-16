@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react'
-import { AppView, BaseStyles } from '@aragon/ui'
-import { Main, TwoPanels } from './components/ui-components'
+import { Main, Button } from '@aragon/ui'
 import PageList from './components/page-list'
 import EditPanel from './components/edit-panel'
 import ViewPanel from './components/view-panel'
-import IpfsIsConnected from './components/ipfs'
 import { utf8ToHex } from 'web3-utils'
 import { get, save } from './lib/ipfs-util'
 import makeCancelable from 'makecancelable'
 import { useAragonApi } from '@aragon/api-react'
+import styled from 'styled-components'
+import AppHeader from './components/AppHeader'
 
 function App() {
   const { api, appState } = useAragonApi()
-  const { pages } = appState
+  const { pages, isSyncing } = appState
 
   const [mode, setMode] = useState('view')
   const [currentPage, setPage] = useState('Welcome')
   const [text, setText] = useState('')
-  const [syncing, setSyncing] = useState(true)
+
+  const [isFinal, setFinal] = useState(false)
 
   const { hash, isProtected } = pages[currentPage] || {
     hash: null,
@@ -78,17 +79,17 @@ function App() {
   }
 
   useEffect(() => {
-    if (hash && !syncing)
+    if (hash && isFinal)
       return makeCancelable(get(hash), text => {
         console.log(text)
         setText(text)
       })
-  }, [hash, syncing])
+  }, [hash, isFinal])
 
   // TODO Something better than a timeout
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSyncing(false)
+      setFinal(true)
     }, 800)
     return () => {
       clearTimeout(timer)
@@ -96,11 +97,22 @@ function App() {
   }, [hash])
 
   return (
-    <div>
-      <BaseStyles />
-      <AppView title="DAO Wiki">
-        <TwoPanels>
-          <Main>
+    <Main assetsUrl="./aragon-ui">
+      <>
+        <AppHeader
+          heading="Wiki"
+          action1={
+            Object.keys(pages).length > 0 && (
+              <Button
+                mode="strong"
+                label="Create page"
+                onClick={() => handleCreate(true)}
+              />
+            )
+          }
+        />
+        <Wrapper>
+          <div css="min-width: 75%">
             {mode === 'view' ? (
               <ViewPanel
                 handleEdit={() => handleEdit(true)}
@@ -108,7 +120,7 @@ function App() {
                 handleRemove={() => handleRemove(currentPage)}
                 page={currentPage}
                 hash={hash}
-                syncing={syncing}
+                syncing={isSyncing || !isFinal}
                 text={text}
                 isProtected={isProtected}
               />
@@ -120,18 +132,22 @@ function App() {
                 handleSubmit={mode === 'edit' ? handleEdit : handleCreate}
               />
             )}
-          </Main>
-          <PageList
-            create={() => handleCreate(true)}
-            change={handlePageChange}
-            pages={pages}
-            selectedPage={currentPage}
-          />
-        </TwoPanels>
-        <IpfsIsConnected />
-      </AppView>
-    </div>
+          </div>
+          <div css="max-width: 25%; margin-left: 1rem;">
+            <PageList
+              change={handlePageChange}
+              pages={pages}
+              selectedPage={currentPage}
+            />
+          </div>
+        </Wrapper>
+      </>
+    </Main>
   )
 }
+
+const Wrapper = styled.div`
+  display: flex;
+`
 
 export default App

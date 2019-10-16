@@ -1,50 +1,26 @@
 import styled from 'styled-components'
 import { theme } from '@aragon/ui'
-import IconEdit from '../icons/components/IconEdit'
-import IconProtect from '../icons/components/IconProtect'
 
-const SpacedBlock = styled.div`
-  margin-top: 30px;
-  height: 100%;
-  &:first-child {
-    margin-top: 0;
-  }
-`
-const Title = styled.h1`
+export const Title = styled.h1`
   margin-top: 10px;
   margin-bottom: 20px;
   font-weight: 600;
   font-size: 22px;
-`
-const Main = styled.div`
-  width: 100%;
-`
-const TwoPanels = styled.div`
-  display: flex;
-  width: 100%;
-  min-width: 800px;
-  flex-grow: 1;
-`
-const SideBar = styled.aside`
-  flex-shrink: 0;
-  flex-grow: 0;
-  width: 16.66%;
-  margin-left: 30px;
-  min-height: 100%;
+  color: ${theme.textSecondary};
 `
 
-const Textarea = styled.textarea`
+export const Textarea = styled.textarea`
   width: 100%;
 `
 
-const ActionLabel = styled.span`
+export const ActionLabel = styled.span`
   margin-left: 15px;
   a {
     text-decoration: none;
   }
 `
 
-const IconWrapper = styled.span`
+export const IconWrapper = styled.span`
   display: flex;
   align-content: center;
   margin-top: -3px;
@@ -54,9 +30,7 @@ const IconWrapper = styled.span`
   }
 `
 
-const ResetStyle = styled.div`
-  font: 15px sans-serif;
-
+export const ResetStyle = styled.div`
   pre,
   code,
   tt {
@@ -105,6 +79,7 @@ const ResetStyle = styled.div`
   }
   ol {
     list-style-type: decimal;
+    padding-inline-start: unset;
   }
   del {
     text-decoration: line-through;
@@ -114,16 +89,3 @@ const ResetStyle = styled.div`
     white-space: pre;
   }
 `
-export {
-  SpacedBlock,
-  Title,
-  Main,
-  TwoPanels,
-  SideBar,
-  Textarea,
-  ResetStyle,
-  ActionLabel,
-  IconWrapper,
-  IconEdit,
-  IconProtect,
-}

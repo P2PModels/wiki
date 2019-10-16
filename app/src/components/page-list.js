@@ -1,75 +1,42 @@
 import React from 'react'
 
-import { Button, Text, IconAdd, theme } from '@aragon/ui'
-import { IconWrapper } from './ui-components'
+import { Box, theme } from '@aragon/ui'
 import styled from 'styled-components'
 import { withTranslation } from 'react-i18next'
 
-const PageList = ({ pages, selectedPage = 'Welcome', create, change, t }) => (
+const PageList = ({ pages, selectedPage = 'Welcome', change, t }) => (
   <Main>
-    {Object.keys(pages).length > 0 ? (
-      <div>
-        <h1>
-          <Text color={theme.textSecondary} smallcaps>
-            {t('Outline')}
-          </Text>
-          <Button onClick={create} mode="text">
-            <IconWrapper className="accent">
-              <IconAdd />
-            </IconWrapper>
-            <span className="action-label accent">{t('Create page')}</span>
-          </Button>
-        </h1>
+    {Object.keys(pages).length > 0 && (
+      <Box heading={t('Outline')}>
         <ul>
           {Object.keys(pages).map(page => (
             <li key={page}>
-              <Button mode="text" wide onClick={e => change(page)}>
+              <a onClick={e => change(page)}>
                 {selectedPage === page ? <strong>{page}</strong> : page}
-              </Button>
+              </a>
             </li>
           ))}
         </ul>
-      </div>
-    ) : null}
+      </Box>
+    )}
   </Main>
 )
 
 const Main = styled.aside`
   flex-shrink: 0;
   flex-grow: 0;
-  width: 260px;
-  margin-left: 30px;
+  min-width: 260px;
   min-height: 100%;
   .accent {
     color: ${theme.accent};
   }
-  h1 {
-    margin-bottom: 15px;
-    color: ${theme.textSecondary};
-    text-transform: lowercase;
-    line-height: 30px;
-    font-variant: small-caps;
-    font-weight: 600;
-    font-size: 16px;
-    border-bottom: 1px solid ${theme.contentBorder};
-    button {
-      margin-top: -5px;
-      float: right;
-      span {
-        display: inline;
-      }
-      .action-label {
-        vertical-align: 5px;
-      }
-    }
-  }
   ul {
-    list-style-type: none;
-    button {
+    margin-left: 20px;
+    a {
+      cursor: pointer;
       text-align: left;
       &:hover {
         color: ${theme.selectionForeground};
-        background-color: ${theme.infoBackground};
       }
     }
   }
