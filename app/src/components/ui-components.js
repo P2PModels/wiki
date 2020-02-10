@@ -1,17 +1,40 @@
+import React from 'react'
 import styled from 'styled-components'
-import { theme } from '@aragon/ui'
+import { useTheme, GU } from '@aragon/ui'
 
-export const Title = styled.h1`
-  margin-top: 10px;
-  margin-bottom: 20px;
-  font-weight: 600;
-  font-size: 22px;
-  color: ${theme.textSecondary};
-`
+export const Title = ({ children, ...props }) => {
+  const theme = useTheme()
+  return (
+    <h1
+      {...props}
+      css={`
+        margin-top: 10px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        font-size: 22px;
+        color: ${theme.contentSecondary};
+      `}
+    >
+      {children}
+    </h1>
+  )
+}
 
-export const Textarea = styled.textarea`
-  width: 100%;
-`
+export const Textarea = ({ children, ...props }) => {
+  const theme = useTheme()
+  return (
+    <textarea
+      {...props}
+      css={`
+        width: 100%;
+        background-color: ${theme.surface};
+        padding: ${2 * GU}px;
+      `}
+    >
+      {children}
+    </textarea>
+  )
+}
 
 export const ActionLabel = styled.span`
   margin-left: 15px;
@@ -20,15 +43,25 @@ export const ActionLabel = styled.span`
   }
 `
 
-export const IconWrapper = styled.span`
-  display: flex;
-  align-content: center;
-  margin-top: -3px;
-  color: ${theme.textSecondary};
-  &.accent {
-    color: ${theme.accent};
-  }
-`
+export const IconWrapper = ({ children, ...props }) => {
+  const theme = useTheme()
+  return (
+    <span
+      {...props}
+      css={`
+        display: flex;
+        align-content: center;
+        margin-top: -3px;
+        color: ${theme.contentSecondary};
+        &.accent {
+          color: ${theme.accent};
+        }
+      `}
+    >
+      {children}
+    </span>
+  )
+}
 
 export const ResetStyle = styled.div`
   pre,

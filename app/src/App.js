@@ -6,12 +6,13 @@ import ViewPanel from './components/view-panel'
 import { utf8ToHex } from 'web3-utils'
 import { get, save } from './lib/ipfs-util'
 import makeCancelable from 'makecancelable'
-import { useAragonApi } from '@aragon/api-react'
+import { useAragonApi, useGuiStyle } from '@aragon/api-react'
 import styled from 'styled-components'
 import AppHeader from './components/AppHeader'
 
 function App() {
   const { api, appState } = useAragonApi()
+  const { appearance } = useGuiStyle()
   const { pages, isSyncing } = appState
 
   const [mode, setMode] = useState('view')
@@ -97,7 +98,7 @@ function App() {
   }, [hash])
 
   return (
-    <Main assetsUrl="./aragon-ui">
+    <Main theme={appearance} assetsUrl="./aragon-ui">
       <>
         <AppHeader
           heading="Wiki"
