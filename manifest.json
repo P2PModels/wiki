@@ -3,15 +3,15 @@
   "author": "P2P Models",
   "description": "A decentralized wiki for Aragon",
   "changelog_url": "https://github.com/p2pmodels/wiki/releases",
-  "details_url": "/public/meta/details.md",
+  "details_url": "/meta/details.md",
   "source_url": "https://github.com/p2pmodels/wiki/",
   "icons": [{
-    "src": "/public/meta/icon.svg",
+    "src": "/meta/icon.svg",
     "sizes": "22x22"
   }],
   "screenshots": [
-    { "src": "/public/meta/screenshot-1.png" },
-    { "src": "/public/meta/screenshot-2.png" }
+    { "src": "/meta/screenshot-1.png" },
+    { "src": "/meta/screenshot-2.png" }
   ],
   "start_url": "/index.html",
   "script": "/script.js"

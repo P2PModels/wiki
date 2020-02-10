@@ -18,22 +18,25 @@
   ],
   "environments": {
     "default": {
-      "network": "development",
+      "network": "rpc",
       "appName": "wiki.open.aragonpm.eth"
     },
     "rinkeby": {
       "registry": "0x98Df287B6C145399Aaa709692c8D308357bC085D",
       "appName": "wiki.open.aragonpm.eth",
+      "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
       "network": "rinkeby"
     },
     "staging": {
       "registry": "0xfe03625ea880a8cba336f9b5ad6e15b0a3b5a939",
       "appName": "wiki.open.aragonpm.eth",
+      "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
       "network": "rinkeby"
     },
     "mainnet": {
       "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
       "appName": "wiki.open.aragonpm.eth",
+      "wsRPC": "wss://mainnet.eth.aragon.network/ws",
       "network": "mainnet"
     }
   },
